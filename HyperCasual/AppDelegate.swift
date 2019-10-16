@@ -13,11 +13,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    private let standard = UserDefaults.standard
+    
+    private var encoder: PropertyListEncoder = {
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        return encoder
+    }()
+    
+    private let decoder = PropertyListDecoder()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = ViewController()
+        window?.rootViewController = MenuViewController()
         window?.makeKeyAndVisible()
+        
+        //decode game controller storage data from userdefault.standard
+        if let data = standard.data(forKey: storageKey), let gameController = try? decoder.decode(GameController.self, from: data) {
+            print("ASD")
+            GameController.shared = gameController
+        }
+        
         return true
     }
 
