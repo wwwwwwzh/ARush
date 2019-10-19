@@ -38,7 +38,7 @@ class InstructionOverlayView: UIView {
     
     func setConstraint() {
         NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: superview!.topAnchor, constant: 60),
+            topAnchor.constraint(equalTo: superview!.safeAreaLayoutGuide.topAnchor, constant: 100),
             leftAnchor.constraint(equalTo: superview!.leftAnchor, constant: -cornerRadius-1000),
             ]
         )
@@ -57,19 +57,21 @@ class InstructionOverlayView: UIView {
     
     func show(text: String, duration: Int = 5) {
         if isAnimating { return }
-        isAnimating = true
-        label.text = text
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [self] in
-            self.transform = self.transform.translatedBy(x: 1000, y: 0)
-            self.alpha = 1
-            }, completion: { (isCompleted) in
-                UIView.animate(withDuration: 0.5, delay: TimeInterval(duration), usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [self] in
-                    self.transform = self.transform.translatedBy(x: -1000, y: 0)
-                    self.alpha = 0
-                    }, completion: { (isCompleted) in
-                        self.isAnimating = false
-                })
-        })
+        DispatchQueue.main.async {
+            self.isAnimating = true
+            self.label.text = text
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [self] in
+                self.transform = self.transform.translatedBy(x: 1000, y: 0)
+                self.alpha = 1
+                }, completion: { (isCompleted) in
+                    UIView.animate(withDuration: 0.5, delay: TimeInterval(duration), usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [self] in
+                        self.transform = self.transform.translatedBy(x: -1000, y: 0)
+                        self.alpha = 0
+                        }, completion: { (isCompleted) in
+                            self.isAnimating = false
+                    })
+            })
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

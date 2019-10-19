@@ -14,12 +14,18 @@ import CoreMotion
 
 class MainGameViewController: UIViewController {
     
+    var onDoneBlock : (() -> Void)?
+    
     var sceneView:ARSCNView = ARSCNView()
     
     let configuration: ARWorldTrackingConfiguration = {
         let configuration = ARWorldTrackingConfiguration()
-        configuration.environmentTexturing = .automatic
-        configuration.wantsHDREnvironmentTextures = true
+        if #available(iOS 12.0, *) {
+            configuration.environmentTexturing = .automatic
+        }
+        if #available(iOS 13.0, *) {
+            configuration.wantsHDREnvironmentTextures = true
+        }
         configuration.planeDetection = [.horizontal]
         return configuration
     }()
@@ -64,7 +70,7 @@ class MainGameViewController: UIViewController {
         sceneView.scene.physicsWorld.contactDelegate = self
         sceneView.scene.physicsWorld.gravity.y = gravityY
         
-        //sceneView.debugOptions = [.showPhysicsShapes]
+        sceneView.debugOptions = [.showPhysicsShapes]
         //GameController.shared.playerTexture = .mud
         setUpMotionManager()
         
@@ -90,6 +96,9 @@ class MainGameViewController: UIViewController {
         timer.invalidate()
         sceneView.session.pause()
         GameFlowController.shared.reset()
+        sceneView.scene.rootNode.childNodes.forEach { (node) in
+            node.removeEverything()
+        }
     }
     
 }
@@ -172,7 +181,7 @@ extension MainGameViewController {
             startGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -24)
             ]
         )
-        startGameButton.setUp(text: "Start Game", size: 24)
+        startGameButton.setUp(text: "Start Game", size: 30)
         //showView(startGameButton)
     }
     
@@ -180,7 +189,7 @@ extension MainGameViewController {
         sceneView.addSubview(instructionLabel)
         instructionLabel.setConstraint()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.instructionLabel.show(text: "Adjust phone to preferred position", duration: 3)
+            self.instructionLabel.show(text: "Adjust phone to preferred position and tap Start button", duration: 3)
         }
     }
     
@@ -234,40 +243,37 @@ extension MainGameViewController {
 extension MainGameViewController:ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if !isPlayerDead {
-            if let currentFrame = sceneView.session.currentFrame{
-                var translation = matrix_identity_float4x4
-                translation.columns.3.z = -playerInitialDistance
-                translation = matrix_multiply(currentFrame.camera.transform, translation)
+            guard let pointOfView = sceneView.pointOfView else { return }
+            
+            updatePositionAndOrientationOf(player, withPosition: SCNVector3(0, 0, -playerInitialDistance), relativeTo: pointOfView)
                 //check if player is inbound
-                let x = CGFloat(translation.columns.3.x)
-                let y = CGFloat(translation.columns.3.y)
-                let z = translation.columns.3.z
+                let x = player.position.x
+                let y = player.position.y
+                let z = player.position.z
                 let maxXOffset = GameFlowController.shared.maxPlayerXOffset
                 let maxYOffset = GameFlowController.shared.maxPlayerYOffset
                 if x < -maxXOffset {
-                    translation.columns.3.x = Float(-maxXOffset)
+                    player.position.x = -maxXOffset
                 }
                 if x > maxXOffset {
-                    translation.columns.3.x = Float(maxXOffset)
+                    player.position.x = maxXOffset
                 }
                 if y < -maxYOffset {
-                    translation.columns.3.y = Float(-maxYOffset)
+                    player.position.y = -maxYOffset
                 }
                 if y > maxYOffset {
-                    translation.columns.3.y = Float(maxYOffset)
+                    player.position.y = maxYOffset
                 }
                 if z < -(playerInitialDistance + playerMaxDistanceOffset) {
-                    translation.columns.3.z = -(playerInitialDistance + playerMaxDistanceOffset)
+                    player.position.z = -(playerInitialDistance + playerMaxDistanceOffset)
                 }
                 if z > playerInitialDistance + playerMaxDistanceOffset {
-                    translation.columns.3.z = playerInitialDistance + playerMaxDistanceOffset
+                    player.position.z = playerInitialDistance + playerMaxDistanceOffset
                 }
                 
-                player.simdTransform = translation
                 //disable some degree of freedom
                 player.eulerAngles.x = 0
                 player.eulerAngles.y = 0
-            }
         }
     }
     
@@ -329,12 +335,13 @@ extension MainGameViewController: SCNPhysicsContactDelegate {
         if isPlayerDead { return }
         if contact.nodeA.name == "player" || contact.nodeB.name == "player" {
             if contact.nodeB.name == "obstacle" || contact.nodeA.name == "obstacle" {
-                AudioServicesPlaySystemSound(1519)
-                player.physicsBody?.isAffectedByGravity = true
-                timer.invalidate()
-                isPlayerDead = true
-                showView(goBackButton)
-                showView(replayButton)
+                handlePlayerDeath()
+            }
+            if contact.nodeB.name == "pass" {
+                handlePlayerPass(node: contact.nodeB)
+            }
+            if contact.nodeA.name == "pass" {
+                handlePlayerPass(node: contact.nodeA)
             }
         }
     }
@@ -352,33 +359,58 @@ extension MainGameViewController {
     }
     
     private func addObstacle() {
-        let obstacle = GameNodes.getObstacle()
-        //avoid flash
-        obstacle.opacity = 0
-        //position
-        obstacle.moveByWithAction(SCNVector3(0, 0, -1))
-        
-        //animation
-        let moveAction = SCNAction.sequence(
-            [SCNAction.moveBy(
-                x: 0,
-                y: 0,
-                z: CGFloat(GameFlowController.shared.currentObstacleLifetimeMoveDistance),
-                duration: GameFlowController.shared.currentObstacleLifetimeMoveDistance / GameFlowController.shared.speed),
-             SCNAction.customAction(duration: 0, action: { (node, number) in
-                node.removeEverything()
-             })
-        ])
-        obstacle.runAction(moveAction)
-        
-        obstacle.name = "obstacle"
-        
-        //physics
-        obstacle.generatePhysicsBody(type: .static, categoryBitMask: Category.obstacle.rawValue, contactTestBitMask: Category.player.rawValue, collisionBitMask: Category.player.rawValue, wantConcavePolyhedron: true)
-                
-        sceneView.scene.rootNode.addChildNode(obstacle)
-        obstacle.runAction(SCNAction.fadeIn(duration: 0.5))
+        sceneView.scene.rootNode.addChildNode(GameNodes.getObstacle())
     }
+    
+    func handlePlayerPass(node: SCNNode) {
+        node.parent?.childNode(withName: "obstacle", recursively: false)?.runAction(SCNAction.sequence([SCNAction.fadeOut(duration: 0.3), SCNAction.customAction(duration: 0, action: { (node, _) in
+            node.removeEverything()
+        })]))
+        node.parent?.runAction(SCNAction.sequence([SCNAction.wait(duration: 0.3), SCNAction.customAction(duration: 0, action: { (node, _) in
+            node.removeEverything()
+        })]))
+    }
+    
+    private func handlePlayerDeath() {
+        AudioServicesPlaySystemSound(1519)
+        player.physicsBody?.isAffectedByGravity = true
+        timer.invalidate()
+        isPlayerDead = true
+        //score
+        let score = Int(GameFlowController.shared.timeSinceStart.rounded())
+        GameController.shared.lastScore = score
+        //new high score
+        if score > GameController.shared.highScore {
+            GameController.shared.highScore = score
+            sendScoreToGameCenter(score: score)
+        }
+        if score > 30 {
+            GameController.shared.isFirstTimePlay = false
+        }
+        //give metals
+        let metalsEarned = Int(score / 10)
+        if metalsEarned > 0 {
+            GameController.shared.metals += metalsEarned
+            instructionLabel.show(text: "You got \(metalsEarned) metals", duration: 2)
+        }
+        
+        //clear obstacles
+        sceneView.scene.rootNode.childNodes.forEach { (node) in
+            if node.name == "obstacle" {
+                node.removeEverything()
+            }
+        }
+        //UI
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.showView(self.goBackButton)
+            self.showView(self.replayButton)
+        }
+        //reset
+        GameFlowController.shared.reset()
+//        print("DEAD")
+    }
+    
+    
 }
 
 //MARK: UI
@@ -418,22 +450,38 @@ extension MainGameViewController {
         timePassed = 0.0
         isPlayerDead = false
         setUpTimer()
-        GameFlowController.shared.reset()
         GameFlowController.shared.setUpTimer()
         hideView(startGameButton)
-        
+        //new player tutorial
+        if GameController.shared.isFirstTimePlay {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                self.instructionLabel.show(text: "Avoid the obstacles by moving and rotating your phone", duration: 10)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
+                    self.instructionLabel.show(text: "You can move forward or backward to avoid the hammers", duration: 8)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                        self.instructionLabel.show(text: "Pause game with button on the right to have a rest", duration: 8)
+                    }
+                }
+            })
+        }
     }
-        
+    
     @objc private func onStopButtonTouched() {
         if (GameFlowController.shared.isPaused) {
-            GameFlowController.shared.isPaused = false
-            configureARSession()
-            sceneView.scene.isPaused = false
+            instructionLabel.show(text: "Game resumed", duration: 3)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                UIApplication.shared.isIdleTimerDisabled = true
+                GameFlowController.shared.isPaused = false
+                self?.configureARSession()
+                self?.sceneView.scene.isPaused = false
+                self?.setUpTimer()
+            }
         } else {
             UIApplication.shared.isIdleTimerDisabled = false
             GameFlowController.shared.isPaused = true
             sceneView.session.pause()
             sceneView.scene.isPaused = true
+            timer.invalidate()
             instructionLabel.show(text: "Game paused. You can have a rest and adjust to a more comfortable position", duration: 6)
         }
     }
@@ -448,6 +496,7 @@ extension MainGameViewController {
     }
     
     @objc private func onGoBackTouched() {
+        onDoneBlock?()
         dismiss(animated: false)
     }
 }

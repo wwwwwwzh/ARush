@@ -7,14 +7,17 @@
 //
 
 import Foundation
-import SceneKit
+import ARKit
+import GameKit
 
 //MARK:Enums
 enum Category:Int{
     case player = 1
     case obstacle = 2
-    case plane = 4
-    case non = 1080
+    case obstaclePass = 4
+    case rushModeObstaclePass = 8
+    case plane = 16
+    case non = 128
 }
 
 enum ObstacleIntervals: Double {
@@ -29,14 +32,15 @@ enum PlayerTextureType: String, Codable {
     case mud = "mud"
     case rubiks = "rubiks"
     case woodDie = "woodDie"
+    static let allCases: [PlayerTextureType] = [.none, .heart, .mud, .rubiks, .woodDie]
 }
 
 enum GameThemeType: String, Codable {
     case metallic = "metallic"
-}
-
-enum PlayerShapeType: String, Codable {
-    case cube = "cube"
+    case gold = "gold"
+    case amber = "amber"
+    case future = "future"
+    static let allCases: [GameThemeType] = [.metallic, .gold, .amber, .future]
 }
 
 enum PlayerTrailType: String, Codable {
@@ -73,6 +77,7 @@ extension SCNNode {
     
     func generatePhysicsBody(
         type: SCNPhysicsBodyType,
+        node: SCNNode,
         categoryBitMask: Int,
         contactTestBitMask: Int,
         collisionBitMask: Int,
@@ -81,8 +86,8 @@ extension SCNNode {
         physicsBody = SCNPhysicsBody(
             type: type,
             shape: wantConcavePolyhedron ?
-                SCNPhysicsShape(node: self, options: [SCNPhysicsShape.Option.type : SCNPhysicsShape.ShapeType.concavePolyhedron]) :
-                SCNPhysicsShape(node: self))
+                SCNPhysicsShape(node: node, options: [SCNPhysicsShape.Option.type : SCNPhysicsShape.ShapeType.concavePolyhedron]) :
+                SCNPhysicsShape(node: node))
         physicsBody?.categoryBitMask = categoryBitMask
         physicsBody?.isAffectedByGravity = false
         physicsBody?.contactTestBitMask = contactTestBitMask
@@ -112,7 +117,34 @@ extension SCNNode {
         removeAllAnimations()
         removeAllAudioPlayers()
         removeAllParticleSystems()
+        physicsBody = nil
+        geometry = nil
         removeFromParentNode()
+    }
+    
+    func getRoot(in sceneView: ARSCNView) -> SCNNode {
+        return getRootHelper(root: sceneView.scene.rootNode, current: self)
+    }
+    
+    private func getRootHelper(root: SCNNode, current: SCNNode) -> SCNNode {
+        if current.parent == nil || current.parent == root {
+            return current
+        } else {
+            return getRootHelper(root: root, current: current.parent!)
+        }
+    }
+}
+
+extension SCNVector3 {
+    static let zero = SCNVector3(0, 0, 0)
+    static let one = SCNVector3(1, 1, 1)
+}
+
+extension Float {
+    func roundedToTenth() -> Float{
+        var value = self
+        value *= 100
+        return roundf(value) / 100
     }
 }
 
@@ -124,9 +156,9 @@ extension Array {
 
 extension UIFont {
     static func getCustomeSystemAdjustedFont(withSize size: Int = 24, adjustSizeAccordingToSystem: Bool = true) -> UIFont{
-        guard let font = UIFont(name: "SF Pro", size: CGFloat(size)) else {
+        guard let font = UIFont(name: "DIN Condensed Bold", size: CGFloat(size)) else {
             print("font invalide")
-            return UIFont.systemFont(ofSize: CGFloat(size))
+            return UIFontMetrics.default.scaledFont(for: UIFont.systemFont(ofSize: CGFloat(size)))
         }
         let cascadeList = [UIFontDescriptor(fontAttributes: [.name: "Chinese"])]
         let cascadeFontDescriptor = font.fontDescriptor.addingAttributes([.cascadeList:cascadeList])
@@ -138,6 +170,27 @@ extension UIFont {
         }
     }
 }
+
+//easy way to show alert
+extension UIViewController {
+    
+    func showAlert(title: String,
+                   message: String,
+                   buttonTitle: String = "OK",
+                   showCancel: Bool = false,
+                   buttonHandler: ((UIAlertAction) -> Void)? = nil) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: buttonTitle, style: .default, handler: buttonHandler))
+        if showCancel {
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+               
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+}
+
 /**
  get time since game start and translate to difficulty (0-16)
  **shoule divide by 4 to get game level**
@@ -160,4 +213,51 @@ func translateTimeToDifficultyLevel(timeSinceStart: Int) -> Int {
         return 0
     }
 }
+
+
+//MARK: Global functions
+func isKeyPresentInUserDefaults(key: String) -> Bool {
+    return UserDefaults.standard.object(forKey: key) != nil
+}
+
+//allow basic calculation between 2 vector3
+func +(left:SCNVector3,right:SCNVector3)->SCNVector3{
+    return SCNVector3(left.x+right.x,left.y+right.y,left.z+right.z)
+}
+
+func /(left:SCNVector3,right:Float)->SCNVector3{
+    return SCNVector3(left.x/right, left.y/right, left.z/right)
+}
+
+func ==(left:SCNVector3,right:SCNVector3)->Bool{
+    return (left.x == right.x && left.y == right.y && left.z == right.z)
+}
+
+func updatePositionAndOrientationOf(_ node: SCNNode, withPosition position: SCNVector3, relativeTo referenceNode: SCNNode) {
+    let referenceNodeTransform = matrix_float4x4(referenceNode.transform)
+
+    // Setup a translation matrix with the desired position
+    var translationMatrix = matrix_identity_float4x4
+    translationMatrix.columns.3.x = position.x
+    translationMatrix.columns.3.y = position.y
+    translationMatrix.columns.3.z = position.z
+
+    // Combine the configured translation matrix with the referenceNode's transform to get the desired position AND orientation
+    let updatedTransform = matrix_multiply(referenceNodeTransform, translationMatrix)
+    node.transform = SCNMatrix4(updatedTransform)
+}
+
+func sendScoreToGameCenter(score: Int) {
+    // Submit score to GC leaderboard
+    let bestScoreInt = GKScore(leaderboardIdentifier: leaderBoardID)
+    bestScoreInt.value = Int64(score)
+    GKScore.report([bestScoreInt]) { (error) in
+        if error != nil {
+            print(error!.localizedDescription)
+        } else {
+            print("Best Score submitted to your Leaderboard!")
+        }
+    }
+}
+
 

@@ -9,26 +9,28 @@
 import Foundation
 import SceneKit
 
-var gravityY = Float(-3)
+let gravityY = Float(-3)
 
-var playerBoxWidth = CGFloat(0.08)
+let playerBoxWidth = CGFloat(0.08)
 
-var playerInitialDistance:Float = 0.4
+let playerInitialDistance:Float = 0.4
 
-var playerMaxDistanceOffset:Float = 0.5
+let playerMaxDistanceOffset:Float = 0.5
 
-var initialOpenWidth = playerBoxWidth * 1.5
+let initialOpenWidth = playerBoxWidth * 1.5
 
-var initialObstacleDistance = 0.5
+let initialObstacleDistance = 0.4
 
-var maxObstacleDistance = 1.0
+let maxObstacleDistance = 1.0
 
-var obstacleWidth = playerBoxWidth
+let obstacleWidth = playerBoxWidth
 
-var initialObstacleSpeed = CGFloat(0.2)
+let initialObstacleSpeed = CGFloat(0.2)
 
-var defaultMaxObstacleSpeed = 0.5
+let defaultMaxObstacleSpeed = 0.5
 
-var timerAccuracy = 0.1
+let timerAccuracy = 0.1
 
-var storageKey = "Stanford"
+let storageKey = "Stanford"
+
+let leaderBoardID = "com.illumination.hypercasual.highscore"

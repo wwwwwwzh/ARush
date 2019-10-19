@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -10,16 +12,41 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <view key="view" contentMode="scaleToFill" id="8Yl-XK-HcK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash" translatesAutoresizingMaskIntoConstraints="NO" id="09Z-BR-gjY">
+                                <rect key="frame" x="20" y="265" width="374" height="376"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="illumiantionLogo1.1OrangeAsset 3" translatesAutoresizingMaskIntoConstraints="NO" id="SyU-7H-8At">
+                                <rect key="frame" x="107" y="798.5" width="200" height="51.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="1T6-co-ser"/>
+                                    <constraint firstAttribute="width" secondItem="SyU-7H-8At" secondAttribute="height" multiplier="343:88" id="aj5-MI-Din"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="SyU-7H-8At" firstAttribute="top" relation="greaterThanOrEqual" secondItem="09Z-BR-gjY" secondAttribute="bottom" priority="750" constant="100" id="5Fa-S6-hrV"/>
+                            <constraint firstItem="vlh-tX-FHf" firstAttribute="bottom" secondItem="SyU-7H-8At" secondAttribute="bottom" constant="12" id="GqO-lQ-IU5"/>
+                            <constraint firstItem="SyU-7H-8At" firstAttribute="centerX" secondItem="vlh-tX-FHf" secondAttribute="centerX" id="bjh-ml-T8z"/>
+                            <constraint firstItem="vlh-tX-FHf" firstAttribute="trailing" secondItem="09Z-BR-gjY" secondAttribute="trailing" constant="20" id="glO-vs-PeO"/>
+                            <constraint firstItem="09Z-BR-gjY" firstAttribute="centerX" secondItem="vlh-tX-FHf" secondAttribute="centerX" id="hUL-fz-Rb0"/>
+                            <constraint firstItem="09Z-BR-gjY" firstAttribute="leading" secondItem="vlh-tX-FHf" secondAttribute="leading" constant="20" id="ofg-en-zvL"/>
+                            <constraint firstItem="09Z-BR-gjY" firstAttribute="centerY" secondItem="vlh-tX-FHf" secondAttribute="centerY" id="x90-bA-sbT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="vlh-tX-FHf"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="52.173913043478265" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Splash" width="265" height="376"/>
+        <image name="illumiantionLogo1.1OrangeAsset 3" width="1109" height="497.5"/>
+    </resources>
 </document>

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1E1BBEF92354215D00E659A8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1BBEF82354215D00E659A8 /* Constants.swift */; };
+		1E30E082235A067C00BD6D33 /* MetalsCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E30E081235A067C00BD6D33 /* MetalsCountView.swift */; };
 		1E888FB42354243100DAA6A8 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB32354243100DAA6A8 /* MenuViewController.swift */; };
 		1E888FB623546ABA00DAA6A8 /* GameNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB523546ABA00DAA6A8 /* GameNodes.swift */; };
 		1E888FB82354ADA700DAA6A8 /* Materials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB72354ADA700DAA6A8 /* Materials.swift */; };
@@ -22,17 +23,21 @@
 		1E93FF8D2353634F00278414 /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E93FF8C2353634F00278414 /* Models.scnassets */; };
 		1EAC57AC2355A7D800AEB2AC /* GameFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */; };
 		1EB59741235748150096F9F6 /* BluredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB59740235748150096F9F6 /* BluredView.swift */; };
+		1EB5974423589FCE0096F9F6 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EB5974323589FCE0096F9F6 /* GameKit.framework */; };
+		1EB5974623589FD80096F9F6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EB5974523589FD80096F9F6 /* StoreKit.framework */; };
+		1EB5974A2359BF4A0096F9F6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB597492359BF4A0096F9F6 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1E1BBEF82354215D00E659A8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		1E30E081235A067C00BD6D33 /* MetalsCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalsCountView.swift; sourceTree = "<group>"; };
 		1E888FB32354243100DAA6A8 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		1E888FB523546ABA00DAA6A8 /* GameNodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameNodes.swift; sourceTree = "<group>"; };
 		1E888FB72354ADA700DAA6A8 /* Materials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Materials.swift; sourceTree = "<group>"; };
 		1E888FB92354AE8100DAA6A8 /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		1E888FBC2354B96100DAA6A8 /* InstructionOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionOverlayView.swift; sourceTree = "<group>"; };
 		1E888FBE2354BFDA00DAA6A8 /* NoticePaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticePaddingLabel.swift; sourceTree = "<group>"; };
-		1E93FF71235319D800278414 /* HyperCasual.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HyperCasual.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E93FF71235319D800278414 /* AR Rush.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AR Rush.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E93FF74235319D800278414 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1E93FF78235319D800278414 /* MainGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainGameViewController.swift; sourceTree = "<group>"; };
 		1E93FF7D235319DC00278414 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -42,6 +47,9 @@
 		1E93FF8C2353634F00278414 /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
 		1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFlowController.swift; sourceTree = "<group>"; };
 		1EB59740235748150096F9F6 /* BluredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluredView.swift; sourceTree = "<group>"; };
+		1EB5974323589FCE0096F9F6 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		1EB5974523589FD80096F9F6 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		1EB597492359BF4A0096F9F6 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EB5974423589FCE0096F9F6 /* GameKit.framework in Frameworks */,
+				1EB5974623589FD80096F9F6 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +71,7 @@
 				1E888FBC2354B96100DAA6A8 /* InstructionOverlayView.swift */,
 				1E888FBE2354BFDA00DAA6A8 /* NoticePaddingLabel.swift */,
 				1EB59740235748150096F9F6 /* BluredView.swift */,
+				1E30E081235A067C00BD6D33 /* MetalsCountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -70,13 +81,14 @@
 			children = (
 				1E93FF73235319D800278414 /* HyperCasual */,
 				1E93FF72235319D800278414 /* Products */,
+				1EB5974223589FCE0096F9F6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		1E93FF72235319D800278414 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1E93FF71235319D800278414 /* HyperCasual.app */,
+				1E93FF71235319D800278414 /* AR Rush.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,22 +96,48 @@
 		1E93FF73235319D800278414 /* HyperCasual */ = {
 			isa = PBXGroup;
 			children = (
+				1EB597482359BF2B0096F9F6 /* GameControllers */,
+				1EB597472359BF0B0096F9F6 /* ViewControllers */,
 				1E93FF74235319D800278414 /* AppDelegate.swift */,
-				1E93FF78235319D800278414 /* MainGameViewController.swift */,
-				1E888FB523546ABA00DAA6A8 /* GameNodes.swift */,
-				1E888FB72354ADA700DAA6A8 /* Materials.swift */,
-				1E888FB32354243100DAA6A8 /* MenuViewController.swift */,
 				1E888FBB2354B94100DAA6A8 /* Views */,
-				1E888FB92354AE8100DAA6A8 /* GameController.swift */,
 				1E1BBEF82354215D00E659A8 /* Constants.swift */,
 				1E93FF8C2353634F00278414 /* Models.scnassets */,
 				1E93FF8823535EB200278414 /* Utilities.swift */,
-				1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */,
 				1E93FF7D235319DC00278414 /* Assets.xcassets */,
 				1E93FF7F235319DC00278414 /* LaunchScreen.storyboard */,
 				1E93FF82235319DC00278414 /* Info.plist */,
 			);
 			path = HyperCasual;
+			sourceTree = "<group>";
+		};
+		1EB5974223589FCE0096F9F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1EB5974523589FD80096F9F6 /* StoreKit.framework */,
+				1EB5974323589FCE0096F9F6 /* GameKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1EB597472359BF0B0096F9F6 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1E888FB32354243100DAA6A8 /* MenuViewController.swift */,
+				1E93FF78235319D800278414 /* MainGameViewController.swift */,
+				1EB597492359BF4A0096F9F6 /* SettingsViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		1EB597482359BF2B0096F9F6 /* GameControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1E888FB523546ABA00DAA6A8 /* GameNodes.swift */,
+				1E888FB72354ADA700DAA6A8 /* Materials.swift */,
+				1E888FB92354AE8100DAA6A8 /* GameController.swift */,
+				1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */,
+			);
+			path = GameControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,7 +157,7 @@
 			);
 			name = HyperCasual;
 			productName = HyperCasual;
-			productReference = 1E93FF71235319D800278414 /* HyperCasual.app */;
+			productReference = 1E93FF71235319D800278414 /* AR Rush.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -183,6 +221,8 @@
 				1E888FBA2354AE8100DAA6A8 /* GameController.swift in Sources */,
 				1E888FBF2354BFDA00DAA6A8 /* NoticePaddingLabel.swift in Sources */,
 				1E888FBD2354B96100DAA6A8 /* InstructionOverlayView.swift in Sources */,
+				1E30E082235A067C00BD6D33 /* MetalsCountView.swift in Sources */,
+				1EB5974A2359BF4A0096F9F6 /* SettingsViewController.swift in Sources */,
 				1E93FF75235319D800278414 /* AppDelegate.swift in Sources */,
 				1E1BBEF92354215D00E659A8 /* Constants.swift in Sources */,
 			);
@@ -321,14 +361,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 6WSD5B98L3;
 				INFOPLIST_FILE = HyperCasual/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.illumination.HyperCasual;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "AR Rush";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -339,14 +381,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 6WSD5B98L3;
 				INFOPLIST_FILE = HyperCasual/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.illumination.HyperCasual;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "AR Rush";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

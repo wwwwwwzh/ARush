@@ -14,6 +14,12 @@ class Materials {
         switch GameController.shared.gameTheme {
         case .metallic:
             return getMetal()
+        case .gold:
+            return getMetal(color: UIColor(red: 255, green: 217, blue: 0, alpha: 1).cgColor)
+        case .amber:
+            return getMetal(color: UIColor(red: 1, green: 0, blue: 0, alpha: 1).cgColor)
+        case .future:
+            return getMetal(color: #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1))
         }
     }
 }

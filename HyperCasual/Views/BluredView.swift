@@ -26,7 +26,7 @@ class BluredView: UIView {
         backgroundColor = UIColor.clear
         
         blurView.frame = self.bounds
-        blurView.layer.cornerRadius = 16
+        blurView.layer.cornerRadius = cornerRadius
         blurView.layer.masksToBounds = true
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
@@ -81,8 +81,10 @@ class BluredView: UIView {
      */
     func setUp(text: String, size: Int = 18) {
         addSubview(label)
-        label.text = text
-        label.font = UIFont.getCustomeSystemAdjustedFont(withSize: size)
+        DispatchQueue.main.async { [weak self] in
+            self?.label.text = text
+            self?.label.font = UIFont.getCustomeSystemAdjustedFont(withSize: size)
+        }
         NSLayoutConstraint.activate([
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.centerXAnchor.constraint(equalTo: centerXAnchor),

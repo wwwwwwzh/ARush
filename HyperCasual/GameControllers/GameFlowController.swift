@@ -71,13 +71,15 @@ class GameFlowController {
         }
     }
     
-    var maxPlayerXOffset: CGFloat {
+    var maxPlayerXOffset: Float {
         get {
-            return (openWidth + obstacleWidth * 2) / 2 - (playerBoxWidth / 2)
+            let width = (openWidth + obstacleWidth * 2) / 2
+            let offset = width - playerBoxWidth / 2
+            return Float(offset * 1.1)
         }
     }
     
-    var maxPlayerYOffset: CGFloat {
+    var maxPlayerYOffset: Float {
         get {
             return maxPlayerXOffset
         }
@@ -97,7 +99,9 @@ class GameFlowController {
     }
     
     func reset() {
-        timer.invalidate()
-        timeSinceStart = 0
+        GameFlowController.shared.timer.invalidate()
+        GameFlowController.shared.timeSinceStart = 0
+        GameFlowController.shared.maxSpeed = defaultMaxObstacleSpeed
+        GameFlowController.shared.currentObstacleLength = 0.05
     }
 }
