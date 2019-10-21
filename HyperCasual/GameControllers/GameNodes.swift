@@ -10,14 +10,23 @@ import Foundation
 import SceneKit
 
 //MARK:Utilities
+enum Direction: Int {
+    case up = 5
+    case down = 6
+    case left = 3
+    case right = 2
+    case rotate = 7
+    case end = 1
+}
 extension GameNodes {
+    
 }
 
 //MARK: - Obstable generaters
 class GameNodes {
-    private static func getGoThrough(randomizeLength: Bool = false, rotate: Bool = true) -> SCNNode {
+    private static func getGoThrough(randomizeLength: Bool = false, rotate: Bool = true, rotate45Degree: Bool = false) -> SCNNode {
         //get the open width
-        let openWidth = GameFlowController.shared.openWidth
+        let openWidth = GameFlowController.shared.openWidth * 1.1
         
         let height = openWidth + obstacleWidth * 2
         
@@ -39,13 +48,12 @@ class GameNodes {
         node.addChildNodes(nodes)
         
         //random if use rotated
-        let wantRotation = Bool.random() && rotate
-        if wantRotation {
-            node.runAction(SCNAction.rotateBy(x: 0, y: 0, z: CGFloat.pi * CGFloat.random(in: 0...0.5), duration: 0))
+        if rotate {
+            node.runAction(SCNAction.rotateBy(x: 0, y: 0, z: rotate45Degree ? CGFloat.pi / 4 : CGFloat.pi * CGFloat.random(in: 0...0.5), duration: 0))
         }
                 
         GameFlowController.shared.currentObstacleLength = Double(length)
-        GameFlowController.shared.maxSpeed = wantRotation ? 0.2 : 0.3
+        GameFlowController.shared.maxSpeed = rotate ? 0.2 : 0.3
                 
         return node
     }
@@ -64,7 +72,7 @@ class GameNodes {
         return node
     }
     
-    private static func getDoor(isHorizontal: Bool? = nil, length: CGFloat = obstacleWidth, single: Bool = false) -> SCNNode {
+    private static func getDoor(isHorizontal: Bool? = nil, length: CGFloat = obstacleWidth, single: Bool = false, direction: Direction? = nil) -> SCNNode {
         let openWidth = GameFlowController.shared.openWidth
         let height = obstacleWidth * 2 + openWidth
         ///the parent node at top of node hierachy
@@ -77,6 +85,9 @@ class GameNodes {
         
         //make positioning random
         var seed = Int.random(in: 1...6)
+        if let direction = direction {
+            seed = direction.rawValue
+        }
         if let isHorizontal = isHorizontal {
             if isHorizontal {
                 seed = Int.random(in: 1...3)
@@ -228,9 +239,21 @@ class GameNodes {
         blocks[2].position = SCNVector3(-offset, offset, 0)
         blocks[3].position = SCNVector3(-offset, -offset, 0)
         
-        
-        
-        GameFlowController.shared.currentObstacleLength = 0.5
+        for i in 0...3 {
+            if Bool.random() {
+                node.addChildNode(blocks[i])
+            }
+        }
+        //check if no child was added
+        if node.childNodes.count == 0 {
+            node.addChildNode(blocks[Int.random(in: 0...3)])
+        }
+        //check if no child was removed
+        if node.childNodes.count == 4 {
+            node.childNodes[Int.random(in: 0...3)].removeFromParentNode()
+        }
+                
+        GameFlowController.shared.currentObstacleLength = Double(obstacleWidth)
         GameFlowController.shared.maxSpeed = 0.2
         
         return node
@@ -247,7 +270,26 @@ extension GameNodes {
         let root = SCNNode()
         
         ///shape node
-        let node = getShape()
+        var node: SCNNode!
+        switch GameController.shared.gameMode {
+        case .casual:
+            node = getShape()
+        case .rush:
+            node = getRushModeObstacle()
+        }
+        //play tutorial
+        if GameController.shared.isFirstTimePlay {
+            if GameFlowController.shared.directions.count > 0 {
+                let direction = GameFlowController.shared.directions.removeFirst()
+                node = getDoor(direction: direction)
+                if direction == .rotate {
+                    node = getGoThrough(randomizeLength: false, rotate: true, rotate45Degree: true)
+                }
+                GameFlowController.shared.currentDirection = direction
+            } else {
+                GameController.shared.isFirstTimePlay = false
+            }
+        }
         let material = Materials.getMaterial()
         node.assignMaterial(material)
         node.opacity = 0
@@ -269,11 +311,16 @@ extension GameNodes {
         root.moveByWithAction(SCNVector3(0, 0, -1))
         
         //animation
+        var moveVector: SCNVector3!
+        switch GameController.shared.gameMode {
+        case .casual:
+            moveVector = SCNVector3(x: 0, y: 0, z: Float(GameFlowController.shared.currentObstacleLifetimeMoveDistance))
+        case .rush:
+            moveVector = SCNVector3(x: 0, y: 0, z: Float(GameFlowController.shared.currentObstacleLifetimeMoveDistance))
+        }
         let moveAction = SCNAction.sequence(
-            [SCNAction.moveBy(
-                x: 0,
-                y: 0,
-                z: CGFloat(GameFlowController.shared.currentObstacleLifetimeMoveDistance),
+            [SCNAction.move(
+                by: moveVector,
                 duration: GameFlowController.shared.currentObstacleLifetimeMoveDistance / GameFlowController.shared.speed),
              SCNAction.customAction(duration: 0, action: { (node, _) in
                 node.removeEverything()
@@ -287,7 +334,6 @@ extension GameNodes {
     
     static func getPlayer() -> SCNNode {
         let player: SCNNode!
-        print(GameController.shared.playerTexture)
         switch GameController.shared.playerTexture {
         case .heart:
             player = PlayerModels.shared.heart
@@ -326,9 +372,8 @@ extension GameNodes {
         let scene = SCNScene(named: "Models.scnassets/BasicLevel.scn")!
         let root = scene.rootNode.childNode(withName: "ScoreNode", recursively: false)!
         root.assignMaterial(Materials.getMaterial())
-        (root.childNode(withName: "HighScore", recursively: false)!.geometry! as! SCNText).string = "High Score: \(GameController.shared.highScore)"
-        (root.childNode(withName: "LastScore", recursively: false)!.geometry! as! SCNText).string = "Last Score: \(GameController.shared.lastScore)"
-        print(GameController.shared.lastScore)
+        (root.childNode(withName: "Casual High", recursively: false)!.geometry! as! SCNText).string = "Casual High: \(GameController.shared.highScoreCasualMode)"
+        (root.childNode(withName: "Rush High", recursively: false)!.geometry! as! SCNText).string = "Rush High: \(GameController.shared.highScoreRushMode)"
         
         return root
     }

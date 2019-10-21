@@ -15,7 +15,7 @@ enum Category:Int{
     case player = 1
     case obstacle = 2
     case obstaclePass = 4
-    case rushModeObstaclePass = 8
+    //case rushModeObstaclePass = 8
     case plane = 16
     case non = 128
 }
@@ -113,11 +113,23 @@ extension SCNNode {
     }
     
     func removeEverything() {
+        if childNodes.count == 0 {
+            removeEverythingHelper()
+        } else {
+            childNodes.forEach { (node) in
+                node.removeEverything()
+            }
+            removeEverythingHelper()
+        }
+    }
+    
+    private func removeEverythingHelper() {
         removeAllActions()
         removeAllAnimations()
         removeAllAudioPlayers()
         removeAllParticleSystems()
         physicsBody = nil
+        geometry?.materials.removeAll()
         geometry = nil
         removeFromParentNode()
     }
@@ -225,6 +237,10 @@ func +(left:SCNVector3,right:SCNVector3)->SCNVector3{
     return SCNVector3(left.x+right.x,left.y+right.y,left.z+right.z)
 }
 
+func -(left:SCNVector3,right:SCNVector3)->SCNVector3{
+    return SCNVector3(left.x-right.x,left.y-right.y,left.z-right.z)
+}
+
 func /(left:SCNVector3,right:Float)->SCNVector3{
     return SCNVector3(left.x/right, left.y/right, left.z/right)
 }
@@ -249,13 +265,26 @@ func updatePositionAndOrientationOf(_ node: SCNNode, withPosition position: SCNV
 
 func sendScoreToGameCenter(score: Int) {
     // Submit score to GC leaderboard
-    let bestScoreInt = GKScore(leaderboardIdentifier: leaderBoardID)
-    bestScoreInt.value = Int64(score)
-    GKScore.report([bestScoreInt]) { (error) in
-        if error != nil {
-            print(error!.localizedDescription)
-        } else {
-            print("Best Score submitted to your Leaderboard!")
+    switch GameController.shared.gameMode {
+    case .casual:
+        let bestScoreInt = GKScore(leaderboardIdentifier: leaderBoardID)
+        bestScoreInt.value = Int64(score)
+        GKScore.report([bestScoreInt]) { (error) in
+            if error != nil {
+                print(error!.localizedDescription)
+            } else {
+                print("Best Score submitted to your Leaderboard!")
+            }
+        }
+    case .rush:
+        let bestScoreInt = GKScore(leaderboardIdentifier: leaderBoardIDRushMode)
+        bestScoreInt.value = Int64(score)
+        GKScore.report([bestScoreInt]) { (error) in
+            if error != nil {
+                print(error!.localizedDescription)
+            } else {
+                print("Best Score submitted to your Leaderboard!")
+            }
         }
     }
 }

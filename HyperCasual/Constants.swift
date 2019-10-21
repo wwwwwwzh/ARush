@@ -15,7 +15,7 @@ let playerBoxWidth = CGFloat(0.08)
 
 let playerInitialDistance:Float = 0.4
 
-let playerMaxDistanceOffset:Float = 0.5
+let playerMaxDistanceOffset:Float = 0.2
 
 let initialOpenWidth = playerBoxWidth * 1.5
 
@@ -34,3 +34,4 @@ let timerAccuracy = 0.1
 let storageKey = "Stanford"
 
 let leaderBoardID = "com.illumination.hypercasual.highscore"
+let leaderBoardIDRushMode = "com.illumination.hypercasual.highscoreRushMode"

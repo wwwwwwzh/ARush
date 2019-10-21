@@ -20,7 +20,15 @@ class GameFlowController {
     
     var speed: Double {
         get {
-            return min(Double(initialObstacleSpeed) + timeSinceStart * 0.005, maxSpeed)
+            if GameController.shared.isFirstTimePlay {
+                return 0.15
+            }
+            switch GameController.shared.gameMode {
+            case .casual:
+                return min(Double(initialObstacleSpeed) + timeSinceStart * 0.005, maxSpeed)
+            case .rush:
+                return min(Double(2 * initialObstacleSpeed) + timeSinceStart * 0.001, maxSpeed * 2)
+            }
         }
     }
     
@@ -29,7 +37,18 @@ class GameFlowController {
      */
     var instanciateInterval: Double {
         get {
-            return (currentObstacleLength + obstacleDistance) / speed
+            if GameController.shared.isFirstTimePlay {
+                return 4
+            }
+            switch GameController.shared.gameMode {
+            case .casual:
+                return (currentObstacleLength + obstacleDistance) / speed
+            case .rush:
+                if timeSinceStart > 10 {
+                    return 1
+                }
+                return 2 - timeSinceStart * 0.1
+            }
         }
     }
     
@@ -64,18 +83,31 @@ class GameFlowController {
     
     var openWidth: CGFloat {
         get {
-            if timeSinceStart > 30 {
+            if GameController.shared.isFirstTimePlay {
+                return initialOpenWidth
+            }
+            switch GameController.shared.gameMode {
+            case .casual:
+                if timeSinceStart > 30 {
+                    return 1.1 * playerBoxWidth
+                }
+                return initialOpenWidth - CGFloat(0.4 * Double(playerBoxWidth) / 30 * timeSinceStart)
+            case .rush:
                 return 1.1 * playerBoxWidth
             }
-            return initialOpenWidth - CGFloat(0.4 * Double(playerBoxWidth) / 30 * timeSinceStart)
         }
     }
     
     var maxPlayerXOffset: Float {
         get {
-            let width = (openWidth + obstacleWidth * 2) / 2
-            let offset = width - playerBoxWidth / 2
-            return Float(offset * 1.1)
+            switch GameController.shared.gameMode {
+            case .casual:
+                let width = (openWidth + obstacleWidth * 2) / 2
+                let offset = width - playerBoxWidth / 2
+                return Float(offset * 1.1)
+            case .rush:
+                return Float(openWidth / 1.8)
+            }
         }
     }
     
@@ -84,6 +116,10 @@ class GameFlowController {
             return maxPlayerXOffset
         }
     }
+    
+    //for first time player
+    var directions = [Direction.up, .down, .left, .right, .rotate, .end]
+    var currentDirection = Direction.up
     
     var timeSinceStart = 0.0
     

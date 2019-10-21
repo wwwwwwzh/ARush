@@ -11,11 +11,12 @@ import SceneKit
 
 class Materials {
     static func getMaterial() -> SCNMaterial {
+        print(GameController.shared.gameTheme)
         switch GameController.shared.gameTheme {
         case .metallic:
             return getMetal()
         case .gold:
-            return getMetal(color: UIColor(red: 255, green: 217, blue: 0, alpha: 1).cgColor)
+            return getMetal(color: UIColor(red: 1, green: 0.84, blue: 0, alpha: 1).cgColor)
         case .amber:
             return getMetal(color: UIColor(red: 1, green: 0, blue: 0, alpha: 1).cgColor)
         case .future:

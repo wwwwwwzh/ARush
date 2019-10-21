@@ -27,7 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func readGameController() {
         if isKeyPresentInUserDefaults(key: GameControllerKeys.isFirstTime.rawValue) {
-            GameController.shared.isFirstTimePlay = standard.bool(forKey: GameControllerKeys.isFirstTime.rawValue)
+            GameController.shared.isFirstTimePlay = true
+                //standard.bool(forKey: GameControllerKeys.isFirstTime.rawValue)
         }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.hasRated.rawValue) {
             GameController.shared.hasRated = standard.bool(forKey: GameControllerKeys.hasRated.rawValue)
@@ -42,14 +43,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             GameController.shared.ownedPlayers = inferred
         }
-        if isKeyPresentInUserDefaults(key: GameControllerKeys.highScore.rawValue) {
-            GameController.shared.highScore = standard.integer(forKey: GameControllerKeys.highScore.rawValue)
+        if isKeyPresentInUserDefaults(key: GameControllerKeys.highScoreRushMode.rawValue) {
+            GameController.shared.highScoreRushMode = standard.integer(forKey: GameControllerKeys.highScoreRushMode.rawValue)
         }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.playerTail.rawValue) {
             GameController.shared.playerTrail = PlayerTrailType(rawValue: standard.string(forKey: GameControllerKeys.playerTail.rawValue)!)!
         }
-        if isKeyPresentInUserDefaults(key: GameControllerKeys.lastScore.rawValue) {
-            GameController.shared.lastScore = standard.integer(forKey: GameControllerKeys.lastScore.rawValue)
+        if isKeyPresentInUserDefaults(key: GameControllerKeys.highScoreCasualMode.rawValue) {
+            GameController.shared.highScoreCasualMode = standard.integer(forKey: GameControllerKeys.highScoreCasualMode.rawValue)
         }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.metals.rawValue) {
             GameController.shared.metals = standard.integer(forKey: GameControllerKeys.metals.rawValue)

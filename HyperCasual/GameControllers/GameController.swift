@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import SceneKit
 
 enum GameControllerKeys: String {
-    case lastScore = "lastScore"
-    case highScore = "highScore"
-    case isFirstTime = "isFirstTime"
+    case highScoreRushMode = "highScoreRushMode"
+    case highScoreCasualMode = "highScoreCasualMode"
+    case isFirstTime = "isFirstTimea"
     case playerTexture = "playerTexture!"
     case gameTheme = "gameTheme"
     case playerTail = "playerTail"
@@ -20,11 +21,18 @@ enum GameControllerKeys: String {
     case ownedPlayers = "ownedPlayers"
 }
 
-class GameController: Codable {
+enum GameMode: String {
+    case casual = "casual"
+    case rush = "rush"
+}
+
+class GameController {
     
     static let shared = GameController()
     
     private init() {}
+    
+    var gameMode = GameMode.rush
     
     var isFirstTimePlay = true {
            didSet{
@@ -38,16 +46,15 @@ class GameController: Codable {
         }
     }
     
-    var lastScore = 0 {
+    var highScoreRushMode = 0 {
         didSet{
-            print(GameController.shared.lastScore)
-            UserDefaults.standard.set(GameController.shared.lastScore, forKey: GameControllerKeys.lastScore.rawValue)
+            UserDefaults.standard.set(GameController.shared.highScoreRushMode, forKey: GameControllerKeys.highScoreRushMode.rawValue)
         }
     }
     
-    var highScore = 0 {
+    var highScoreCasualMode = 0 {
         didSet{
-            UserDefaults.standard.set(GameController.shared.highScore, forKey: GameControllerKeys.highScore.rawValue)
+            UserDefaults.standard.set(GameController.shared.highScoreCasualMode, forKey: GameControllerKeys.highScoreCasualMode.rawValue)
         }
     }
     
@@ -74,6 +81,7 @@ class GameController: Codable {
     
     var gameTheme = GameThemeType.metallic {
            didSet{
+            print(GameController.shared.gameTheme)
             UserDefaults.standard.set(GameController.shared.gameTheme.rawValue, forKey: GameControllerKeys.gameTheme.rawValue)
            }
        }
@@ -85,7 +93,7 @@ class GameController: Codable {
        }
         
     func toString() {
-        print("Player texture: \(playerTexture). Game theme: \(gameTheme), player trial: \(playerTrail). Last score: \(lastScore)")
+        
     }
 }
 

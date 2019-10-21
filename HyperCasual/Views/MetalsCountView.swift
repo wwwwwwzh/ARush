@@ -27,7 +27,7 @@ class MetalsCountView: UIView {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "gold"))
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = UIColor.clear
-        imageView.isUserInteractionEnabled = true
+        imageView.isUserInteractionEnabled = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()

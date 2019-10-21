@@ -58,6 +58,8 @@ class MenuViewController: UIViewController {
     
     //UI
     var playGameButton = BluredView(cornerRadius: 3)
+    var playRushGameButton = BluredView(cornerRadius: 3)
+    var buyButton = BluredView(cornerRadius: 3)
     var instructionLabel = InstructionOverlayView()
     var openLeaderBoardButton: UIImageView = {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "ranking"))
@@ -106,11 +108,15 @@ class MenuViewController: UIViewController {
         
         //UI
         setUpPlayGameButton()
+        setUpBuyButton()
+        setUpPlayRushGameButton()
         setUpOpenLeaderboardButton()
         //setUpOpenSettingsButton()
         setUpMetalsView()
         setUpOpenLikeButton()
         setUpInstructionLabel()
+        
+        toogleButtons()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -217,12 +223,35 @@ extension MenuViewController {
         playGameButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onPlayGameButtonTouched)))
         sceneView.addSubview(playGameButton)
         NSLayoutConstraint.activate([
-            playGameButton.centerXAnchor.constraint(equalTo: sceneView.centerXAnchor),
+            playGameButton.leftAnchor.constraint(equalTo: sceneView.leftAnchor, constant: 12),
             playGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
             ]
         )
-        playGameButton.setUp(text: "Play", size: 35)
+        playGameButton.setUp(text: "Casual", size: 30)
         //showView(startGameButton)
+    }
+    
+    func setUpPlayRushGameButton() {
+        playRushGameButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onPlayRushGameButtonTouched)))
+        sceneView.addSubview(playRushGameButton)
+        NSLayoutConstraint.activate([
+            playRushGameButton.rightAnchor.constraint(equalTo: sceneView.rightAnchor, constant: -12),
+            playRushGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
+            ]
+        )
+        playRushGameButton.setUp(text: "Rush", size: 30)
+    }
+    
+    func setUpBuyButton() {
+        buyButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onBuyButtonTouched)))
+        sceneView.addSubview(buyButton)
+        NSLayoutConstraint.activate([
+            buyButton.centerXAnchor.constraint(equalTo: sceneView.centerXAnchor),
+            buyButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
+            ]
+        )
+        buyButton.setUp(text: "Buy", size: 30)
+        buyButton.isHidden = true
     }
     
     func setUpOpenLeaderboardButton() {
@@ -357,12 +386,8 @@ extension MenuViewController {
                 return
             }
             playerRowOffsetDestination.x += change
-            GameController.shared.playerTexture = PlayerTextureType.allCases[-Int((currentX + change) / playerOffset)]
-            if GameController.shared.ownedPlayers.contains(GameController.shared.playerTexture) {
-                playGameButton.setUp(text: "Play", size: 35)
-            } else {
-                playGameButton.setUp(text: "Buy", size: 35)
-            }
+            GameController.shared.playerTexture = PlayerTextureType.allCases[-Int((currentX + change).roundedToTenth() / playerOffset)]
+            toogleButtons()
         } else if node.getRoot(in: sceneView) == obstaclesRoot {
             let change: Float = gestureRecognizer.direction == .left ? -obstacleOffset : obstacleOffset
             let currentX = obstacleRowOffsetDestination.x.roundedToTenth()
@@ -370,28 +395,54 @@ extension MenuViewController {
                 return
             }
             obstacleRowOffsetDestination.x += change
-            GameController.shared.gameTheme = GameThemeType.allCases[-Int((currentX + change) / obstacleOffset)]
+            GameController.shared.gameTheme = GameThemeType.allCases[-Int((currentX + change).roundedToTenth() / obstacleOffset)]
+        }
+    }
+    
+    func toogleButtons() {
+        if GameController.shared.ownedPlayers.contains(GameController.shared.playerTexture) {
+            showView(playGameButton)
+            showView(playRushGameButton)
+            hideView(buyButton)
+        } else {
+            hideView(playGameButton)
+            hideView(playRushGameButton)
+            showView(buyButton)
         }
     }
     
     @objc func onPlayGameButtonTouched() {
-        if playGameButton.label.text == "Play" {
-            let viewController = MainGameViewController()
-            viewController.modalPresentationStyle = .fullScreen
-            viewController.onDoneBlock = { [weak self] in
-                self?.setUpScore()
-                self?.metalsLabel.label.text = String(GameController.shared.metals)
-            }
-            present(viewController, animated: false, completion: nil)
-        } else if playGameButton.label.text == "Buy" {
-            showAlert(title: "Buy with 100 gold", message: "Are you sure to buy this new player with 100 gold", buttonTitle: "Yes", showCancel: true) { (_) in
-                if GameController.shared.metals >= 100 {
-                    GameController.shared.metals -= 100
-                    self.metalsLabel.label.text = String(GameController.shared.metals)
-                    GameController.shared.ownedPlayers.append(GameController.shared.playerTexture)
-                } else {
-                    self.showAlert(title: "No enough gold", message: "Play game to earn more gold!")
-                }
+        GameController.shared.gameMode = .casual
+        playGame()
+    }
+    
+    @objc func onPlayRushGameButtonTouched() {
+        if GameController.shared.isFirstTimePlay {
+            showAlert(title: "Play one casual game first", message: "Please follow the casual game tutorial first to better enjoy the game")
+            return
+        }
+        GameController.shared.gameMode = .rush
+        playGame()
+    }
+    
+    func playGame() {
+        let viewController = MainGameViewController()
+        viewController.modalPresentationStyle = .fullScreen
+        viewController.onDoneBlock = { [weak self] in
+            self?.setUpScore()
+            self?.metalsLabel.label.text = String(GameController.shared.metals)
+        }
+        present(viewController, animated: false, completion: nil)
+    }
+    
+    @objc func onBuyButtonTouched() {
+        showAlert(title: "Buy with 100 gold", message: "Are you sure to buy this new player with 100 gold", buttonTitle: "Yes", showCancel: true) { (_) in
+            if GameController.shared.metals >= 100 {
+                GameController.shared.metals -= 100
+                self.metalsLabel.label.text = String(GameController.shared.metals)
+                GameController.shared.ownedPlayers.append(GameController.shared.playerTexture)
+            } else {
+                self.showAlert(title: "No enough gold", message: "Play game to earn more gold!")
             }
         }
     }
@@ -411,9 +462,11 @@ extension MenuViewController {
     }
     
     @objc func openLike() {
-        if !GameController.shared.hasRated && GameController.shared.highScore > 60{
+        if !GameController.shared.hasRated && GameController.shared.highScoreCasualMode > 60{
             SKStoreReviewController.requestReview()
-            GameController.shared.hasRated = true
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 3) {
+                GameController.shared.hasRated = true
+            }
         } else {
             guard let writeReviewURL = URL(string: "https://itunes.apple.com/app/id1483938390?action=write-review")
                 else { fatalError("Expected a valid URL") }
@@ -441,4 +494,30 @@ extension MenuViewController: GKGameCenterControllerDelegate {
     }
     
     
+}
+
+//MARK: Utilities
+extension MenuViewController {
+    private func showViewAndFade(_ label: UIView){
+            DispatchQueue.main.async {
+                label.isHidden = false
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now()+5) {
+                UIView.animate(withDuration: 1, animations: {
+                    label.isHidden = true
+                })
+            }
+    }
+    
+    private func showView(_ label: UIView) {
+        DispatchQueue.main.async {
+            label.isHidden = false
+        }
+    }
+    
+    private func hideView(_ label: UIView) {
+        DispatchQueue.main.async {
+            label.isHidden = true
+        }
+    }
 }
