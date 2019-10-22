@@ -90,6 +90,7 @@ class MenuViewController: UIViewController {
     //MARK:viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        checkCameraPermission()
                 
         setUPSceneView()
         setupCamera()
@@ -133,6 +134,39 @@ class MenuViewController: UIViewController {
 
 //MARK: viewDidLoad set up funcs
 extension MenuViewController {
+    func checkCameraPermission() {
+        if AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
+            return
+        } else {
+            let alertController = UIAlertController(title: "Grant camera permission", message: "Augmented reality relies on camera to fuse virtual objects with your surroundings", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "No", style: .destructive) { (_) in
+                self.showAlert(title: "You must grant camera permission to use the app", message: "The game couldn't run without camera access", buttonTitle: "Grant Permission", showCancel: false) { (_) in
+                    self.checkCameraPermissionHelper()
+                }
+            })
+            alertController.addAction(UIAlertAction(title: "Yes", style: .default) { (_) in
+                self.checkCameraPermissionHelper()
+            })
+                   
+            DispatchQueue.main.async {
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func checkCameraPermissionHelper() {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
+            if granted {
+                return
+            } else {
+                self.showAlert(title: "Please go to settings to grant permission", message: "The game couldn't run without camera access", buttonTitle: "Settings", showCancel: true) { (_) in
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                }
+            }
+        })
+    }
+    
+    
     func setUPSceneView(){
         view.addSubview(sceneView)
         sceneView.translatesAutoresizingMaskIntoConstraints = false
@@ -157,7 +191,7 @@ extension MenuViewController {
     
     func setupCamera() {
         guard let camera = sceneView.pointOfView?.camera else {
-            fatalError("Expected a valid `pointOfView` from the scene.")
+            return
         }
         
         /*
@@ -462,14 +496,14 @@ extension MenuViewController {
     }
     
     @objc func openLike() {
-        if !GameController.shared.hasRated && GameController.shared.highScoreCasualMode > 60{
+        if !GameController.shared.hasRated && GameController.shared.highScoreCasualMode > 30{
             SKStoreReviewController.requestReview()
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 3) {
                 GameController.shared.hasRated = true
             }
         } else {
             guard let writeReviewURL = URL(string: "https://itunes.apple.com/app/id1483938390?action=write-review")
-                else { fatalError("Expected a valid URL") }
+                else { return }
             UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
         }
     }

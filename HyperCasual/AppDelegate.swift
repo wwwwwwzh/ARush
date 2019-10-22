@@ -27,8 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func readGameController() {
         if isKeyPresentInUserDefaults(key: GameControllerKeys.isFirstTime.rawValue) {
-            GameController.shared.isFirstTimePlay = true
-                //standard.bool(forKey: GameControllerKeys.isFirstTime.rawValue)
+            GameController.shared.isFirstTimePlay = standard.bool(forKey: GameControllerKeys.isFirstTime.rawValue)
         }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.hasRated.rawValue) {
             GameController.shared.hasRated = standard.bool(forKey: GameControllerKeys.hasRated.rawValue)

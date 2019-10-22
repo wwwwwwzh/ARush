@@ -112,7 +112,7 @@ extension MainGameViewController {
     
     func setupCamera() {
         guard let camera = sceneView.pointOfView?.camera else {
-            fatalError("Expected a valid `pointOfView` from the scene.")
+            return
         }
         
         /*
