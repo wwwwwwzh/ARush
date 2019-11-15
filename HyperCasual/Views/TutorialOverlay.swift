@@ -71,7 +71,7 @@ class TutorialOverlay: UIView {
                 rotation = -CGFloat.pi / 4
                 imageName = "rotate"
                 translation = (0, 0)
-            case .end:
+            case .end, .wall:
                 return
             }
             self.isHidden = false

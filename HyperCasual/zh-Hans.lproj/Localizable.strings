@@ -1,0 +1,58 @@
+/* 
+  Localizable.strings
+  HyperCasual
+
+  Created by Yu Wang on 2019/10/22.
+  Copyright © 2019 Yu Wang. All rights reserved.
+*/
+
+//MARK: Menu view controller
+"OK" = "好";
+"Now point your camera to objects around you" = "现在把手机对着周围的物品";
+"Grant camera permission" = "允许使用相机";
+"Augmented reality relies on camera to fuse virtual objects with your surroundings" = "增效现实技术利用相机来结合虚拟物体和真实环境";
+"No" = "不";
+"You must grant camera permission to use the app" = "你需要允许使用相机来运行游戏";
+"The game couldn't run without camera access" = "该游戏无法在无相机权限的情况下运行";
+"Grant Permission" = "允许使用相机";
+"Yes" = "好";
+"Please go to settings to grant permission" = "请在设置里修改相机权限";
+"Settings" = "打开设置";
+"Casual" = "休闲模式";
+"Rush" = "快跑模式";
+"Buy" = "购买";
+"Swipe the cubes to change appearance" = "滑动方块来选择外观";
+"Swipe on the bigger objects to change theme" = "滑动更大的方块来选择游戏主题";
+"Hit Casual Or Rush Button At Bottom Of Screen To Play" = "点击屏幕下方的的休闲或快跑模式按钮以开始游戏";
+"Play one casual game first" = "请先玩一局休闲模式";
+"Please follow the casual game tutorial first to better enjoy the game" = "请先完成休闲模式中的新手指导";
+"Buy with 100 gold" = "100黄金购买";
+"Are you sure to buy this new player with 100 gold" = "你确定用100黄金购买该外观吗";
+"No enough gold" = "黄金不够";
+"Play game to earn more gold!" = "每玩一局游戏都可以获得一定数量的黄金!";
+
+
+
+
+//MARK: - Main game view controller
+
+"Start Game" = "开始游戏";
+"Avoid incoming objects by moving and rotating your device in all dimensions" = "移动或旋转设备来躲避即将到来的障碍物";
+"You can't surpass the boundary indicated by the blue tunnel" = "不要超过蓝色区域以外的范围";
+"Adjust to a comfortable position and hit start" = "调整到一个舒服的姿势";
+"Rotate your device" = "旋转设备";
+"Enjoy your game!" = "已通过新手指导!";
+"Move your device" = "把设备";
+"up" = "上移";
+"down" = "下移";
+"right" = "右移";
+"left" = "左移";
+"You got" = "你获得了";
+"metals" = "个黄金";
+"Game will resume in 3 seconds, adjust position now" = "游戏将在3秒后继续，你现在可以调整初始位置";
+"Game paused. You can have a rest and adjust to a more comfortable position" = "游戏已暂停，你可以休息一下并换个更舒服的姿势";
+
+//MARK: Game nodes
+
+"Casual High: " = "休闲高分：";
+"Rush High: " = "快跑高分：";

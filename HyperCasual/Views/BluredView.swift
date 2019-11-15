@@ -14,9 +14,32 @@ class BluredView: UIView {
 
     var label = NoticePaddingLabel(clearBackground: true)
     
+    var shimmerLabel = NoticePaddingLabel(clearBackground: true)
+    
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.light))
     
     var icon: UIImageView?
+    
+    var gradient: CAGradientLayer = {
+        let gradient = CAGradientLayer()
+        gradient.colors = [UIColor.clear.cgColor, UIColor.white.cgColor, UIColor.clear.cgColor]
+        gradient.locations = [0, 0.5, 1]
+        gradient.frame = CGRect(x: 0, y: 0, width: 200, height: 80)
+        
+        let angle = CGFloat.pi * 45 / 180
+        gradient.transform = CATransform3DMakeRotation(angle, 0, 0, 1)
+        
+        return gradient
+    }()
+    
+    static var animation: CABasicAnimation = {
+        let animation = CABasicAnimation(keyPath: "transform.translation.x")
+        animation.duration = 1.5
+        animation.fromValue = -100
+        animation.toValue = 100
+        animation.repeatCount = Float.infinity
+        return animation
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -79,11 +102,11 @@ class BluredView: UIView {
      Used for labels
      Call this after the view's constraint has been set
      */
-    func setUp(text: String, size: Int = 18) {
+    func setUp(text: String, size: Int = 18, adjustToSystem: Bool = true, shimmer: Bool = false) {
         addSubview(label)
         DispatchQueue.main.async { [weak self] in
             self?.label.text = text
-            self?.label.font = UIFont.getCustomeSystemAdjustedFont(withSize: size)
+            self?.label.font = UIFont.getCustomeSystemAdjustedFont(withSize: size, adjustSizeAccordingToSystem: adjustToSystem)
         }
         NSLayoutConstraint.activate([
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -95,10 +118,31 @@ class BluredView: UIView {
             heightAnchor.constraint(equalTo: label.heightAnchor),
             ]
         )
-    }
         
+        //add shimmer and animation
+        if shimmer {
+            addSubview(shimmerLabel)
+            shimmerLabel.textColor = UIColor.white
+            DispatchQueue.main.async { [weak self] in
+                self?.shimmerLabel.text = self?.label.text
+                self?.shimmerLabel.font = self?.label.font
+            }
+            NSLayoutConstraint.activate([
+                shimmerLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+                shimmerLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+                ]
+            )
+            DispatchQueue.main.async { [weak self] in
+                self?.gradient.add(BluredView.animation, forKey: "shimmer")
+                self?.shimmerLabel.layer.mask = self?.gradient
+            }
+        }
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+        
+    
 
 }

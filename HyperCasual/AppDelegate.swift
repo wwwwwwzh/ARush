@@ -18,9 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //decode game controller storage data from userdefault.standard
         readGameController()
-        
+        MusicPlayer.shared.startBackgroundMusic()
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = MenuViewController()
+        
+        window?.rootViewController = CheckCameraPermissionViewController()
         window?.makeKeyAndVisible()
         return true
     }
@@ -29,8 +30,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if isKeyPresentInUserDefaults(key: GameControllerKeys.isFirstTime.rawValue) {
             GameController.shared.isFirstTimePlay = standard.bool(forKey: GameControllerKeys.isFirstTime.rawValue)
         }
+        if isKeyPresentInUserDefaults(key: GameControllerKeys.timesOfPlay.rawValue) {
+            GameController.shared.timesOfPlay = standard.integer(forKey: GameControllerKeys.timesOfPlay.rawValue)
+        }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.hasRated.rawValue) {
             GameController.shared.hasRated = standard.bool(forKey: GameControllerKeys.hasRated.rawValue)
+        }
+        if isKeyPresentInUserDefaults(key: GameControllerKeys.isSoundOn.rawValue) {
+            GameController.shared.isSoundOn = standard.bool(forKey: GameControllerKeys.isSoundOn.rawValue)
+        }
+        if isKeyPresentInUserDefaults(key: GameControllerKeys.isHapticOn.rawValue) {
+            GameController.shared.isHapticOn = standard.bool(forKey: GameControllerKeys.isHapticOn.rawValue)
         }
         if isKeyPresentInUserDefaults(key: GameControllerKeys.playerTexture.rawValue) {
             GameController.shared.playerTexture = PlayerTextureType(rawValue: standard.string(forKey: GameControllerKeys.playerTexture.rawValue)!)!

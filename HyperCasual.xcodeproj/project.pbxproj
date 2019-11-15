@@ -10,6 +10,12 @@
 		1E1BBEF92354215D00E659A8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1BBEF82354215D00E659A8 /* Constants.swift */; };
 		1E30E082235A067C00BD6D33 /* MetalsCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E30E081235A067C00BD6D33 /* MetalsCountView.swift */; };
 		1E30E084235C86FF00BD6D33 /* TutorialOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E30E083235C86FF00BD6D33 /* TutorialOverlay.swift */; };
+		1E30E0AC235EB04000BD6D33 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1E30E0AE235EB04000BD6D33 /* Localizable.strings */; };
+		1E30E0B5235EB8A900BD6D33 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1E30E0B7235EB8A900BD6D33 /* InfoPlist.strings */; };
+		1E30E0BF236048F100BD6D33 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E30E0BE236048F100BD6D33 /* MusicPlayer.swift */; };
+		1E30E0C523608DD200BD6D33 /* soundEffect.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E30E0C423608DD200BD6D33 /* soundEffect.wav */; };
+		1E30E0C923608F4700BD6D33 /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1E30E0C823608F4700BD6D33 /* background.mp3 */; };
+		1E57A721237E395C00D33847 /* CheckCameraPermissionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E57A720237E395C00D33847 /* CheckCameraPermissionViewController.swift */; };
 		1E888FB42354243100DAA6A8 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB32354243100DAA6A8 /* MenuViewController.swift */; };
 		1E888FB623546ABA00DAA6A8 /* GameNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB523546ABA00DAA6A8 /* GameNodes.swift */; };
 		1E888FB82354ADA700DAA6A8 /* Materials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E888FB72354ADA700DAA6A8 /* Materials.swift */; };
@@ -33,6 +39,14 @@
 		1E1BBEF82354215D00E659A8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1E30E081235A067C00BD6D33 /* MetalsCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalsCountView.swift; sourceTree = "<group>"; };
 		1E30E083235C86FF00BD6D33 /* TutorialOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlay.swift; sourceTree = "<group>"; };
+		1E30E0AD235EB04000BD6D33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		1E30E0AF235EB04E00BD6D33 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1E30E0B6235EB8A900BD6D33 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1E30E0B8235EB8AA00BD6D33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		1E30E0BE236048F100BD6D33 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
+		1E30E0C423608DD200BD6D33 /* soundEffect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = soundEffect.wav; sourceTree = "<group>"; };
+		1E30E0C823608F4700BD6D33 /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
+		1E57A720237E395C00D33847 /* CheckCameraPermissionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckCameraPermissionViewController.swift; path = HyperCasual/CheckCameraPermissionViewController.swift; sourceTree = SOURCE_ROOT; };
 		1E888FB32354243100DAA6A8 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		1E888FB523546ABA00DAA6A8 /* GameNodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameNodes.swift; sourceTree = "<group>"; };
 		1E888FB72354ADA700DAA6A8 /* Materials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Materials.swift; sourceTree = "<group>"; };
@@ -44,7 +58,6 @@
 		1E93FF78235319D800278414 /* MainGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainGameViewController.swift; sourceTree = "<group>"; };
 		1E93FF7D235319DC00278414 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E93FF80235319DC00278414 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		1E93FF82235319DC00278414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E93FF8823535EB200278414 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		1E93FF8C2353634F00278414 /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
 		1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFlowController.swift; sourceTree = "<group>"; };
@@ -102,13 +115,16 @@
 				1EB597482359BF2B0096F9F6 /* GameControllers */,
 				1EB597472359BF0B0096F9F6 /* ViewControllers */,
 				1E93FF74235319D800278414 /* AppDelegate.swift */,
+				1E30E0C423608DD200BD6D33 /* soundEffect.wav */,
+				1E30E0C823608F4700BD6D33 /* background.mp3 */,
 				1E888FBB2354B94100DAA6A8 /* Views */,
 				1E1BBEF82354215D00E659A8 /* Constants.swift */,
 				1E93FF8C2353634F00278414 /* Models.scnassets */,
 				1E93FF8823535EB200278414 /* Utilities.swift */,
 				1E93FF7D235319DC00278414 /* Assets.xcassets */,
 				1E93FF7F235319DC00278414 /* LaunchScreen.storyboard */,
-				1E93FF82235319DC00278414 /* Info.plist */,
+				1E30E0B7235EB8A900BD6D33 /* InfoPlist.strings */,
+				1E30E0AE235EB04000BD6D33 /* Localizable.strings */,
 			);
 			path = HyperCasual;
 			sourceTree = "<group>";
@@ -128,6 +144,7 @@
 				1E888FB32354243100DAA6A8 /* MenuViewController.swift */,
 				1E93FF78235319D800278414 /* MainGameViewController.swift */,
 				1EB597492359BF4A0096F9F6 /* SettingsViewController.swift */,
+				1E57A720237E395C00D33847 /* CheckCameraPermissionViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -139,6 +156,7 @@
 				1E888FB72354ADA700DAA6A8 /* Materials.swift */,
 				1E888FB92354AE8100DAA6A8 /* GameController.swift */,
 				1EAC57AB2355A7D800AEB2AC /* GameFlowController.swift */,
+				1E30E0BE236048F100BD6D33 /* MusicPlayer.swift */,
 			);
 			path = GameControllers;
 			sourceTree = "<group>";
@@ -185,6 +203,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 1E93FF68235319D800278414;
 			productRefGroup = 1E93FF72235319D800278414 /* Products */;
@@ -202,8 +221,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E93FF8D2353634F00278414 /* Models.scnassets in Resources */,
+				1E30E0C523608DD200BD6D33 /* soundEffect.wav in Resources */,
+				1E30E0AC235EB04000BD6D33 /* Localizable.strings in Resources */,
 				1E93FF81235319DC00278414 /* LaunchScreen.storyboard in Resources */,
 				1E93FF7E235319DC00278414 /* Assets.xcassets in Resources */,
+				1E30E0C923608F4700BD6D33 /* background.mp3 in Resources */,
+				1E30E0B5235EB8A900BD6D33 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,7 +247,9 @@
 				1E888FBA2354AE8100DAA6A8 /* GameController.swift in Sources */,
 				1E888FBF2354BFDA00DAA6A8 /* NoticePaddingLabel.swift in Sources */,
 				1E888FBD2354B96100DAA6A8 /* InstructionOverlayView.swift in Sources */,
+				1E30E0BF236048F100BD6D33 /* MusicPlayer.swift in Sources */,
 				1E30E082235A067C00BD6D33 /* MetalsCountView.swift in Sources */,
+				1E57A721237E395C00D33847 /* CheckCameraPermissionViewController.swift in Sources */,
 				1EB5974A2359BF4A0096F9F6 /* SettingsViewController.swift in Sources */,
 				1E30E084235C86FF00BD6D33 /* TutorialOverlay.swift in Sources */,
 				1E93FF75235319D800278414 /* AppDelegate.swift in Sources */,
@@ -235,6 +260,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		1E30E0AE235EB04000BD6D33 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E30E0AD235EB04000BD6D33 /* zh-Hans */,
+				1E30E0AF235EB04E00BD6D33 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		1E30E0B7235EB8A900BD6D33 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E30E0B6235EB8A900BD6D33 /* en */,
+				1E30E0B8235EB8AA00BD6D33 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = SOURCE_ROOT;
+		};
 		1E93FF7F235319DC00278414 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -250,6 +293,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -296,7 +340,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -310,6 +354,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -350,7 +395,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -365,7 +410,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6WSD5B98L3;
 				INFOPLIST_FILE = HyperCasual/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -373,6 +418,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.illumination.HyperCasual;
 				PRODUCT_NAME = "AR Rush";
 				SWIFT_VERSION = 5.0;
@@ -385,7 +431,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6WSD5B98L3;
 				INFOPLIST_FILE = HyperCasual/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -393,6 +439,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.illumination.HyperCasual;
 				PRODUCT_NAME = "AR Rush";
 				SWIFT_VERSION = 5.0;

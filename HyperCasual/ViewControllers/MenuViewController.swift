@@ -69,14 +69,31 @@ class MenuViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-//    var openSettingsButton: UIImageView = {
-//        let imageView = UIImageView(image: #imageLiteral(resourceName: "settings"))
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.backgroundColor = UIColor.clear
-//        imageView.isUserInteractionEnabled = true
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        return imageView
-//    }()
+    var isSettingsOpen = false
+    var openSettingsButton: UIImageView = {
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "settings"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = UIColor.clear
+        imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    var soundButton: UIImageView = {
+        let imageView = UIImageView(image: GameController.shared.isSoundOn ? #imageLiteral(resourceName: "music-on") : #imageLiteral(resourceName: "music-off"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = UIColor.clear
+        imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    var hapticButton: UIImageView = {
+        let imageView = UIImageView(image: GameController.shared.isHapticOn ? #imageLiteral(resourceName: "haptic-on") : #imageLiteral(resourceName: "haptic-off"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = UIColor.clear
+        imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     var metalsLabel = MetalsCountView()
     var openLikeButton: UIImageView = {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "recommended"))
@@ -90,7 +107,6 @@ class MenuViewController: UIViewController {
     //MARK:viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        checkCameraPermission()
                 
         setUPSceneView()
         setupCamera()
@@ -108,65 +124,35 @@ class MenuViewController: UIViewController {
         authenticateLocalPlayer()
         
         //UI
-        setUpPlayGameButton()
         setUpBuyButton()
-        setUpPlayRushGameButton()
         setUpOpenLeaderboardButton()
-        //setUpOpenSettingsButton()
+        setUpOpenSettingsButton()
+        setUpSettingsButtons()
         setUpMetalsView()
         setUpOpenLikeButton()
         setUpInstructionLabel()
         
         toogleButtons()
+        
+        //request review
+        requestReview()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureARSession()
+        setUpPlayGameButton()
+        setUpPlayRushGameButton()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         sceneView.session.pause()
-        GameFlowController.shared.reset()
     }
 }
 
 //MARK: viewDidLoad set up funcs
 extension MenuViewController {
-    func checkCameraPermission() {
-        if AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
-            return
-        } else {
-            let alertController = UIAlertController(title: "Grant camera permission", message: "Augmented reality relies on camera to fuse virtual objects with your surroundings", preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "No", style: .destructive) { (_) in
-                self.showAlert(title: "You must grant camera permission to use the app", message: "The game couldn't run without camera access", buttonTitle: "Grant Permission", showCancel: false) { (_) in
-                    self.checkCameraPermissionHelper()
-                }
-            })
-            alertController.addAction(UIAlertAction(title: "Yes", style: .default) { (_) in
-                self.checkCameraPermissionHelper()
-            })
-                   
-            DispatchQueue.main.async {
-                self.present(alertController, animated: true, completion: nil)
-            }
-        }
-    }
-    
-    func checkCameraPermissionHelper() {
-        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
-            if granted {
-                return
-            } else {
-                self.showAlert(title: "Please go to settings to grant permission", message: "The game couldn't run without camera access", buttonTitle: "Settings", showCancel: true) { (_) in
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-            }
-        })
-    }
-    
-    
     func setUPSceneView(){
         view.addSubview(sceneView)
         sceneView.translatesAutoresizingMaskIntoConstraints = false
@@ -186,7 +172,7 @@ extension MenuViewController {
             config.environmentTexturing = .automatic
         }
         config.isLightEstimationEnabled = true
-        sceneView.session.run(config, options: .resetTracking)
+        sceneView.session.run(config)
     }
     
     func setupCamera() {
@@ -231,6 +217,13 @@ extension MenuViewController {
         sceneView.scene.rootNode.addChildNode(obstaclesRoot)
     }
     
+    func requestReview() {
+        if !GameController.shared.hasRated && GameController.shared.timesOfPlay == TIMES_OF_PLAY_FOR_RATING_REQUEST {
+            SKStoreReviewController.requestReview()
+            GameController.shared.hasRated = true
+        }
+    }
+    
     //MARK: UI
     func setUpScore(){
         sceneView.scene.rootNode.childNode(withName: "Score Root Node", recursively: false)?.removeEverything()
@@ -261,8 +254,7 @@ extension MenuViewController {
             playGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
             ]
         )
-        playGameButton.setUp(text: "Casual", size: 30)
-        //showView(startGameButton)
+        playGameButton.setUp(text: localizedString("Casual"), size: 30, adjustToSystem: false, shimmer: true)
     }
     
     func setUpPlayRushGameButton() {
@@ -273,7 +265,7 @@ extension MenuViewController {
             playRushGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
             ]
         )
-        playRushGameButton.setUp(text: "Rush", size: 30)
+        playRushGameButton.setUp(text: localizedString("Rush"), size: 30, adjustToSystem: false, shimmer: true)
     }
     
     func setUpBuyButton() {
@@ -284,7 +276,7 @@ extension MenuViewController {
             buyButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -36)
             ]
         )
-        buyButton.setUp(text: "Buy", size: 30)
+        buyButton.setUp(text: localizedString("Buy"), size: 30)
         buyButton.isHidden = true
     }
     
@@ -300,17 +292,7 @@ extension MenuViewController {
         openLeaderBoardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openLeaderboard)))
     }
     
-//    func setUpOpenSettingsButton() {
-//        sceneView.addSubview(openSettingsButton)
-//        NSLayoutConstraint.activate([
-//            openSettingsButton.centerXAnchor.constraint(equalTo: sceneView.centerXAnchor, constant: 0),
-//            openSettingsButton.topAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.topAnchor, constant: 12),
-//            openSettingsButton.heightAnchor.constraint(equalToConstant: topButtonWidth),
-//            openSettingsButton.widthAnchor.constraint(equalToConstant: topButtonWidth),
-//            ]
-//        )
-//        openSettingsButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openSettings)))
-//    }
+    
     func setUpMetalsView() {
         sceneView.addSubview(metalsLabel)
         NSLayoutConstraint.activate([
@@ -334,14 +316,56 @@ extension MenuViewController {
         openLikeButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openLike)))
     }
     
+    func setUpOpenSettingsButton() {
+        sceneView.addSubview(openSettingsButton)
+        NSLayoutConstraint.activate([
+            openSettingsButton.rightAnchor.constraint(equalTo: sceneView.rightAnchor, constant: -12),
+            openSettingsButton.topAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.topAnchor, constant: 24 + topButtonWidth),
+            openSettingsButton.heightAnchor.constraint(equalToConstant: topButtonWidth),
+            openSettingsButton.widthAnchor.constraint(equalToConstant: topButtonWidth),
+            ]
+        )
+        openSettingsButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toogleSettings)))
+    }
+    
+    func setUpSettingsButtons() {
+        sceneView.addSubview(soundButton)
+        NSLayoutConstraint.activate([
+            soundButton.rightAnchor.constraint(equalTo: sceneView.rightAnchor, constant: -12),
+            soundButton.topAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.topAnchor, constant:  12 + 2 * (topButtonWidth + 12)),
+            soundButton.heightAnchor.constraint(equalToConstant: topButtonWidth),
+            soundButton.widthAnchor.constraint(equalToConstant: topButtonWidth),
+            ]
+        )
+        soundButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toogleSound)))
+        hideView(soundButton)
+        
+        sceneView.addSubview(hapticButton)
+        NSLayoutConstraint.activate([
+            hapticButton.rightAnchor.constraint(equalTo: sceneView.rightAnchor, constant: -12),
+            hapticButton.topAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.topAnchor, constant: 12 + 3 * (topButtonWidth + 12)),
+            hapticButton.heightAnchor.constraint(equalToConstant: topButtonWidth),
+            hapticButton.widthAnchor.constraint(equalToConstant: topButtonWidth),
+            ]
+        )
+        hapticButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toogleHaptic)))
+        hideView(hapticButton)
+    }
+    
     func setUpInstructionLabel() {
         sceneView.addSubview(instructionLabel)
         instructionLabel.setConstraint()
-        if GameController.shared.isFirstTimePlay {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.instructionLabel.show(text: "Swipe the cubes to change appearance", duration: 5)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-                    self.instructionLabel.show(text: "Swipe on the bigger objects to change theme", duration: 5)
+        if GameController.shared.timesOfPlay < TIMES_OF_PLAY_FOR_RATING_REQUEST {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.instructionLabel.isAnimating = false
+                self.instructionLabel.show(text: localizedString("Swipe the cubes to change appearance"), duration: 4)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.instructionLabel.isAnimating = false
+                    self.instructionLabel.show(text: localizedString("Swipe on the bigger objects to change theme"), duration: 4)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        self.instructionLabel.isAnimating = false
+                        self.instructionLabel.show(text: localizedString("Hit Casual Or Rush Button At Bottom Of Screen To Play"), duration: 5)
+                    }
                 }
             }
         }
@@ -452,7 +476,7 @@ extension MenuViewController {
     
     @objc func onPlayRushGameButtonTouched() {
         if GameController.shared.isFirstTimePlay {
-            showAlert(title: "Play one casual game first", message: "Please follow the casual game tutorial first to better enjoy the game")
+            showAlert(title: localizedString("Play one casual game first"), message: localizedString("Please follow the casual game tutorial first to better enjoy the game"))
             return
         }
         GameController.shared.gameMode = .rush
@@ -460,23 +484,30 @@ extension MenuViewController {
     }
     
     func playGame() {
+        pause()
         let viewController = MainGameViewController()
         viewController.modalPresentationStyle = .fullScreen
         viewController.onDoneBlock = { [weak self] in
             self?.setUpScore()
             self?.metalsLabel.label.text = String(GameController.shared.metals)
+            self?.resume()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self?.playGameButton.gradient.add(BluredView.animation, forKey: "shimmer")
+                self?.playRushGameButton.gradient.add(BluredView.animation, forKey: "shimmer")
+            }
         }
         present(viewController, animated: false, completion: nil)
     }
     
     @objc func onBuyButtonTouched() {
-        showAlert(title: "Buy with 100 gold", message: "Are you sure to buy this new player with 100 gold", buttonTitle: "Yes", showCancel: true) { (_) in
+        showAlert(title: localizedString("Buy with 100 gold"), message: localizedString("Are you sure to buy this new player with 100 gold"), buttonTitle: localizedString("Yes"), showCancel: true) { (_) in
             if GameController.shared.metals >= 100 {
                 GameController.shared.metals -= 100
                 self.metalsLabel.label.text = String(GameController.shared.metals)
                 GameController.shared.ownedPlayers.append(GameController.shared.playerTexture)
             } else {
-                self.showAlert(title: "No enough gold", message: "Play game to earn more gold!")
+                self.showAlert(title: localizedString("No enough gold"), message: localizedString("Play game to earn more gold!"))
             }
         }
     }
@@ -491,8 +522,35 @@ extension MenuViewController {
         present(gcVC, animated: true, completion: nil)
     }
     
-    @objc func openSettings() {
-        pause()
+    @objc func toogleSettings() {
+        if isSettingsOpen {
+            hideView(soundButton)
+            hideView(hapticButton)
+        } else {
+            showView(soundButton)
+            showView(hapticButton)
+        }
+        isSettingsOpen = !isSettingsOpen
+    }
+    
+    @objc func toogleSound() {
+        GameController.shared.isSoundOn = !GameController.shared.isSoundOn
+        if GameController.shared.isSoundOn {
+            MusicPlayer.shared.startBackgroundMusic()
+            soundButton.image = #imageLiteral(resourceName: "music-on")
+        } else {
+            MusicPlayer.shared.stopBackgroundMusic()
+            soundButton.image = #imageLiteral(resourceName: "music-off")
+        }
+    }
+    
+    @objc func toogleHaptic() {
+        GameController.shared.isHapticOn = !GameController.shared.isHapticOn
+        if GameController.shared.isHapticOn {
+            hapticButton.image = #imageLiteral(resourceName: "haptic-on")
+        } else {
+            hapticButton.image = #imageLiteral(resourceName: "haptic-off")
+        }
     }
     
     @objc func openLike() {

@@ -11,6 +11,7 @@ import SceneKit
 
 //MARK:Utilities
 enum Direction: Int {
+    case wall = 0
     case up = 5
     case down = 6
     case left = 3
@@ -142,13 +143,13 @@ class GameNodes {
         let node = SCNNode()
         
         //get the components
-        let lever = SCNNode(geometry: SCNCylinder(radius: 0.005, height: 0.25))
+        let lever = SCNNode(geometry: SCNCylinder(radius: 0.005, height: 0.3))
         let hammer = SCNNode(geometry: SCNCylinder(radius: 0.05, height: 0.15))
                 
         //adjust transform
         node.runAction(SCNAction.group([SCNAction.move(by: SCNVector3(0, 0.25, 0), duration: 0), SCNAction.rotate(by: -CGFloat.pi / 2, around: SCNVector3(0, 0, 1), duration: 0)]))
-        lever.position.y = -0.125
-        hammer.position.y = -0.25
+        lever.position.y = -0.15
+        hammer.position.y = -0.3
         hammer.eulerAngles.z = Float.pi / 2
         
         node.addChildNodes([lever, hammer])
@@ -167,8 +168,7 @@ class GameNodes {
         ///the parent node at top of node hierachy
         let node = SCNNode()
         
-        let shape = SCNBox(width: obstacleWidth, height: 0.3, length: obstacleWidth, chamferRadius: obstacleWidth / 4)
-        let block = SCNNode(geometry: shape)
+        let block = SCNNode(geometry: SCNBox(width: obstacleWidth, height: 0.3, length: obstacleWidth, chamferRadius: obstacleWidth / 4))
         
         let seed = Bool.random()
         
@@ -182,6 +182,50 @@ class GameNodes {
         
         GameFlowController.shared.currentObstacleLength = 0.5
         GameFlowController.shared.maxSpeed = 0.2
+        
+        return node
+    }
+    
+    private static func getRotatingBlock() -> SCNNode {
+        let node = SCNNode()
+        
+        let size = CGFloat(GameFlowController.shared.maxPlayerXOffset) + playerBoxWidth / 2
+        let block = SCNNode(geometry: SCNBox(width: size, height: size, length: size, chamferRadius: 0.01))
+        
+        let seed = Int.random(in: 1...4)
+        
+        let xOffset = GameFlowController.shared.maxPlayerXOffset
+        let yOffset = GameFlowController.shared.maxPlayerYOffset
+        var action = SCNAction()
+        //actions
+        let left = SCNAction.move(by: SCNVector3(-2 * xOffset, 0, 0), duration: 0.5)
+        let right = SCNAction.move(by: SCNVector3(2 * xOffset, 0, 0), duration: 0.5)
+        let up = SCNAction.move(by: SCNVector3(0, 2 * yOffset, 0), duration: 0.5)
+        let down = SCNAction.move(by: SCNVector3(0, -2 * yOffset, 0), duration: 0.5)
+        switch seed {
+        case 1:
+            node.moveByWithAction(SCNVector3(-xOffset, -yOffset, 0))
+            action = SCNAction.repeatForever(SCNAction.sequence([up, right, down, left]))
+        case 2:
+            node.moveByWithAction(SCNVector3(-xOffset, yOffset, 0))
+            action = SCNAction.repeatForever(SCNAction.sequence([right, down, left, up]))
+        case 3:
+            node.moveByWithAction(SCNVector3(xOffset, -yOffset, 0))
+            action = SCNAction.repeatForever(SCNAction.sequence([left, up, right, down]))
+        case 4:
+            node.moveByWithAction(SCNVector3(xOffset, yOffset, 0))
+            action = SCNAction.repeatForever(SCNAction.sequence([down, left, up, right]))
+        default:
+            node.moveByWithAction(SCNVector3(-xOffset, -yOffset, 0))
+            action = SCNAction.repeatForever(SCNAction.sequence([up, right, down, left]))
+        }
+        node.runAction(action)
+        
+        GameFlowController.shared.currentObstacleLength = Double(size)
+        GameFlowController.shared.maxSpeed = 0.2
+        
+        
+        node.addChildNode(block)
         
         return node
     }
@@ -258,6 +302,42 @@ class GameNodes {
         
         return node
     }
+    
+    static func getWall() -> SCNNode {
+        //get the open width
+        let height = CGFloat(GameFlowController.shared.wallOffset * 2)
+        
+        let width: CGFloat = 1.5
+        
+        ///the parent node at top of node hierachy
+        let node = SCNNode()
+        
+        //single wall
+        let wallPlane = SCNPlane(width: width, height: height)
+        //material
+        wallPlane.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/wallImage.png")
+        wallPlane.firstMaterial?.isDoubleSided = true
+        let nodes = [SCNNode](count: 4, elementCreator: SCNNode(geometry: wallPlane))
+        //rotate each wall
+        let rightAngle = CGFloat.pi/2
+        nodes[0].eulerAngles = SCNVector3(rightAngle,rightAngle,0)
+        nodes[1].eulerAngles = SCNVector3(rightAngle,rightAngle,0)
+        nodes[2].eulerAngles = SCNVector3(0,rightAngle,0)
+        nodes[3].eulerAngles = SCNVector3(0,rightAngle,0)
+        
+        //position walls
+        let positionOffset = GameFlowController.shared.wallOffset
+        nodes[0].position = SCNVector3(0, positionOffset, 0)
+        nodes[1].position = SCNVector3(0, -positionOffset, 0)
+        nodes[2].position = SCNVector3(positionOffset, 0, 0)
+        nodes[3].position = SCNVector3(-positionOffset, 0, 0)
+        
+        node.addChildNodes(nodes)
+        
+        node.position.z = 0.5
+        
+        return node
+    }
 }
 
 
@@ -280,14 +360,15 @@ extension GameNodes {
         //play tutorial
         if GameController.shared.isFirstTimePlay {
             if GameFlowController.shared.directions.count > 0 {
-                let direction = GameFlowController.shared.directions.removeFirst()
+                let direction = GameFlowController.shared.directions[0]
                 node = getDoor(direction: direction)
                 if direction == .rotate {
                     node = getGoThrough(randomizeLength: false, rotate: true, rotate45Degree: true)
                 }
                 GameFlowController.shared.currentDirection = direction
-            } else {
-                GameController.shared.isFirstTimePlay = false
+                if direction == .wall {
+                    node = SCNNode()
+                }
             }
         }
         let material = Materials.getMaterial()
@@ -305,6 +386,10 @@ extension GameNodes {
         ///pass node
         let pass = getObstaclePass()
         pass.generatePhysicsBody(type: .static, node: pass, categoryBitMask: Category.obstaclePass.rawValue, contactTestBitMask: Category.player.rawValue, collisionBitMask: Category.non.rawValue, wantConcavePolyhedron: true)
+        
+        ///wall effect
+        let wall = getWall()
+        root.addChildNode(wall)
         
         root.addChildNode(pass)
         //position
@@ -326,11 +411,15 @@ extension GameNodes {
                 node.removeEverything()
              })
         ])
+        let wallFadeInAndOut = SCNAction.sequence([SCNAction.fadeIn(duration: 0.5), SCNAction.wait(duration: GameFlowController.shared.currentDirection == .wall ? 3 : 1), SCNAction.fadeOut(duration: 0.5)])
         node.runAction(moveAction)
         pass.runAction(moveAction)
+        wall.runAction(wallFadeInAndOut)
         
         return root
     }
+    
+    
     
     static func getPlayer() -> SCNNode {
         let player: SCNNode!
@@ -372,12 +461,13 @@ extension GameNodes {
         let scene = SCNScene(named: "Models.scnassets/BasicLevel.scn")!
         let root = scene.rootNode.childNode(withName: "ScoreNode", recursively: false)!
         root.assignMaterial(Materials.getMaterial())
-        (root.childNode(withName: "Casual High", recursively: false)!.geometry! as! SCNText).string = "Casual High: \(GameController.shared.highScoreCasualMode)"
-        (root.childNode(withName: "Rush High", recursively: false)!.geometry! as! SCNText).string = "Rush High: \(GameController.shared.highScoreRushMode)"
+        (root.childNode(withName: "Casual High", recursively: false)!.geometry! as! SCNText).string = "\(localizedString("Casual High: "))\(GameController.shared.highScoreCasualMode)"
+        (root.childNode(withName: "Rush High", recursively: false)!.geometry! as! SCNText).string = "\(localizedString("Rush High: "))\(GameController.shared.highScoreRushMode)"
         
         return root
     }
         
+    //MARK: Random shape generator
     private static func getShape() -> SCNNode {
         let level = GameFlowController.shared.level
         let seed = Int.random(in: 1...100)
@@ -388,8 +478,10 @@ extension GameNodes {
                 return getGoThrough()
             case 31...40:
                 return getSwings()
-            case 41...90:
+            case 41...70:
                 return getDoor()
+            case 71...90:
+                return getRotatingBlock()
             default:
                 return getRandomizedGoThrough()
             }
@@ -399,12 +491,12 @@ extension GameNodes {
                 return getRandomizedGoThrough(randomizeLength: true)
             case 21...30:
                 return getSwings()
-            case 31...40:
-                return getMovingBlocks()
-            case 41...60:
+            case 31...55:
                 return getGoThrough(randomizeLength: true)
-            case 61...85:
+            case 56...70:
                 return getTunnel()
+            case 71...85:
+                return getRotatingBlock()
             default:
                 return getDoor()
             }
@@ -416,10 +508,12 @@ extension GameNodes {
                 return getSwings()
             case 41...50:
                 return getMovingBlocks()
-            case 51...70:
+            case 51...65:
                 return getGoThrough(randomizeLength: true)
-            case 71...85:
+            case 66...75:
                 return getTunnel()
+            case 76...90:
+                return getRotatingBlock()
             default:
                 return getDoor()
             }
@@ -433,8 +527,10 @@ extension GameNodes {
                 return getMovingBlocks()
             case 41...60:
                 return getGoThrough(randomizeLength: true)
-            case 61...85:
+            case 61...75:
                 return getTunnel()
+            case 76...90:
+                return getRotatingBlock()
             default:
                 return getDoor()
             }
@@ -448,8 +544,10 @@ extension GameNodes {
                 return getMovingBlocks()
             case 41...70:
                 return getGoThrough(randomizeLength: true)
-            case 71...95:
+            case 71...85:
                 return getTunnel()
+            case 86...95:
+                return getRotatingBlock()
             default:
                 return getDoor()
             }
@@ -463,8 +561,10 @@ extension GameNodes {
                 return getMovingBlocks()
             case 31...50:
                 return getGoThrough(randomizeLength: true)
-            case 51...80:
+            case 51...70:
                 return getTunnel()
+            case 71...85:
+                return getRotatingBlock()
             default:
                 return getDoor()
             }

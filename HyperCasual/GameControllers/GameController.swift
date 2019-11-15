@@ -12,13 +12,16 @@ import SceneKit
 enum GameControllerKeys: String {
     case highScoreRushMode = "highScoreRushMode"
     case highScoreCasualMode = "highScoreCasualMode"
-    case isFirstTime = "isFirstTimea"
+    case timesOfPlay = "timesOfPlay"
+    case isFirstTime = "isFirstTimeajknasasdasdasm"
     case playerTexture = "playerTexture!"
     case gameTheme = "gameTheme"
     case playerTail = "playerTail"
     case hasRated = "hasRated"
     case metals = "metals"
     case ownedPlayers = "ownedPlayers"
+    case isSoundOn = "isSoundOn"
+    case isHapticOn = "isHapticOn"
 }
 
 enum GameMode: String {
@@ -32,17 +35,35 @@ class GameController {
     
     private init() {}
     
-    var gameMode = GameMode.rush
+    var gameMode = GameMode.casual
     
     var isFirstTimePlay = true {
            didSet{
                UserDefaults.standard.set(GameController.shared.isFirstTimePlay, forKey: GameControllerKeys.isFirstTime.rawValue)
            }
-       }
+    }
+    
+    var timesOfPlay = 0 {
+        didSet{
+            UserDefaults.standard.set(GameController.shared.timesOfPlay, forKey: GameControllerKeys.timesOfPlay.rawValue)
+        }
+    }
     
     var hasRated = false {
         didSet{
             UserDefaults.standard.set(GameController.shared.hasRated, forKey: GameControllerKeys.hasRated.rawValue)
+        }
+    }
+    
+    var isSoundOn = true {
+        didSet{
+            UserDefaults.standard.set(GameController.shared.isSoundOn, forKey: GameControllerKeys.isSoundOn.rawValue)
+        }
+    }
+    
+    var isHapticOn = true {
+        didSet{
+            UserDefaults.standard.set(GameController.shared.isHapticOn, forKey: GameControllerKeys.isHapticOn.rawValue)
         }
     }
     

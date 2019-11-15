@@ -38,7 +38,7 @@ class GameFlowController {
     var instanciateInterval: Double {
         get {
             if GameController.shared.isFirstTimePlay {
-                return 4
+                return 5
             }
             switch GameController.shared.gameMode {
             case .casual:
@@ -117,8 +117,16 @@ class GameFlowController {
         }
     }
     
+    var wallOffset: Float {
+        get {
+            return GameFlowController.shared.maxPlayerXOffset + Float(playerBoxWidth / 2)
+        }
+    }
+    
+    var wallExisted: Bool = false
+    
     //for first time player
-    var directions = [Direction.up, .down, .left, .right, .rotate, .end]
+    var directions = [Direction.up, .left, .wall, .rotate, .end]
     var currentDirection = Direction.up
     
     var timeSinceStart = 0.0

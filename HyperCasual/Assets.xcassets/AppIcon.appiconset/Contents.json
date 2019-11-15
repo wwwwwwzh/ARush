@@ -3,109 +3,109 @@
     {
       "size" : "20x20",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneNotification_20pt@2x.png",
+      "filename" : "appicon.png",
       "scale" : "2x"
     },
     {
       "size" : "20x20",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneNotification_20pt@3x.png",
+      "filename" : "appicon-1.png",
       "scale" : "3x"
     },
     {
       "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneSpootlight5_29pt@2x.png",
+      "filename" : "appicon-2.png",
       "scale" : "2x"
     },
     {
       "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneSpootlight5_29pt@3x.png",
+      "filename" : "appicon-3.png",
       "scale" : "3x"
     },
     {
       "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneSpootlight7_40pt@2x.png",
+      "filename" : "appicon-4.png",
       "scale" : "2x"
     },
     {
       "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneSpootlight7_40pt@3x.png",
+      "filename" : "appicon-5.png",
       "scale" : "3x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneApp_60pt@2x.png",
+      "filename" : "appicon-6.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPhoneApp_60pt@3x.png",
+      "filename" : "appicon-7.png",
       "scale" : "3x"
     },
     {
       "size" : "20x20",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadNotifications_20pt.png",
+      "filename" : "appicon-8.png",
       "scale" : "1x"
     },
     {
       "size" : "20x20",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadNotifications_20pt@2x.png",
+      "filename" : "appicon-9.png",
       "scale" : "2x"
     },
     {
       "size" : "29x29",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadSpootlight5_29pt.png",
+      "filename" : "appicon-10.png",
       "scale" : "1x"
     },
     {
       "size" : "29x29",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadSpootlight5_29pt@2x.png",
+      "filename" : "appicon-11.png",
       "scale" : "2x"
     },
     {
       "size" : "40x40",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadSpootlight7_40pt.png",
+      "filename" : "appicon-12.png",
       "scale" : "1x"
     },
     {
       "size" : "40x40",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadSpootlight7_40pt@2x.png",
+      "filename" : "appicon-13.png",
       "scale" : "2x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadApp_76pt.png",
+      "filename" : "appicon-14.png",
       "scale" : "1x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadApp_76pt@2x.png",
+      "filename" : "appicon-15.png",
       "scale" : "2x"
     },
     {
       "size" : "83.5x83.5",
       "idiom" : "ipad",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMiPadProApp_83.5pt@2x.png",
+      "filename" : "appicon-16.png",
       "scale" : "2x"
     },
     {
       "size" : "1024x1024",
       "idiom" : "ios-marketing",
-      "filename" : "Screen Shot 2019-10-18 at 12.30.37 PMstore_1024pt.png",
+      "filename" : "appicon-17.png",
       "scale" : "1x"
     }
   ],

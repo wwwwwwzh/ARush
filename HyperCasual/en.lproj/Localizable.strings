@@ -1,0 +1,55 @@
+/* 
+  Localizable.strings
+  HyperCasual
+
+  Created by Yu Wang on 2019/10/22.
+  Copyright © 2019 Yu Wang. All rights reserved.
+*/
+
+//MARK: Menu view controller
+"Grant camera permission" = "Grant camera permission";
+"Augmented reality relies on camera to fuse virtual objects with your surroundings" = "Augmented reality relies on camera to fuse virtual objects with your surroundings";
+"No" = "No";
+"You must grant camera permission to use the app" = "You must grant camera permission to use the app";
+"The game couldn't run without camera access" = "The game couldn't run without camera access";
+"Grant Permission" = "Grant Permission";
+"Yes" = "Yes";
+"Please go to settings to grant permission" = "Please go to settings to grant permission";
+"The game couldn't run without camera access" = "The game couldn't run without camera access";
+"Settings" = "Settings";
+"Casual" = "Casual";
+"Rush" = "Rush";
+"Buy" = "Buy";
+"Swipe the cubes to change appearance" = "Swipe the cubes to change appearance";
+"Swipe on the bigger objects to change theme" = "Swipe on the bigger objects to change theme";
+"Hit Casual Button At Lower Left Corner" = "Hit Casual Button At Lower Left Corner To Start Game";
+"Play one casual game first" = "Play one casual game first";
+"Please follow the casual game tutorial first to better enjoy the game" = "Please follow the casual game tutorial first to better enjoy the game";
+"Buy with 100 gold" = "Buy with 100 gold";
+"Are you sure to buy this new player with 100 gold" = "Are you sure to buy this new player with 100 gold";
+"No enough gold" = "No enough gold";
+"Play game to earn more gold!" = "Play game to earn more gold!";
+
+
+
+
+//MARK: - Main game view controller
+
+"Start Game" = "Start Game";
+"Adjust to a comfortable position and hit start" = "Adjust to a comfortable position and hit start";
+"Rotate your device" = "Rotate your device";
+"Enjoy your game!" = "Enjoy your game!";
+"Move your device" = "Move your device";
+"up" = "up";
+"down" = "down";
+"right" = "right";
+"left" = "left";
+"You got" = "You got";
+"metals" = "metals";
+"Game will resume in 3 seconds, adjust position now" = "Game will resume in 3 seconds, adjust position now";
+"Game paused. You can have a rest and adjust to a more comfortable position" = "Game paused. You can have a rest and adjust to a more comfortable position";
+
+
+//MARK: Game nodes
+"Casual High: " = "Casual High: ";
+"Rush High: " = "Rush High: ";

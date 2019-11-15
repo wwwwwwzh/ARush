@@ -183,7 +183,7 @@ extension UIFont {
     }
 }
 
-//easy way to show alert
+//MARK: UIViewController extension
 extension UIViewController {
     
     func showAlert(title: String,
@@ -201,6 +201,12 @@ extension UIViewController {
             self.present(alertController, animated: true, completion: nil)
         }
     }
+}
+
+//MARK: UIView extensions
+extension UIView {
+  
+  
 }
 
 /**
@@ -289,4 +295,6 @@ func sendScoreToGameCenter(score: Int) {
     }
 }
 
-
+func localizedString(_ text: String, comment: String = "") -> String{
+    return NSLocalizedString(text, comment: comment)
+}

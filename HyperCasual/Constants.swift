@@ -35,3 +35,5 @@ let storageKey = "Stanford"
 
 let leaderBoardID = "com.illumination.hypercasual.highscore"
 let leaderBoardIDRushMode = "com.illumination.hypercasual.highscoreRushMode"
+
+let TIMES_OF_PLAY_FOR_RATING_REQUEST = 5

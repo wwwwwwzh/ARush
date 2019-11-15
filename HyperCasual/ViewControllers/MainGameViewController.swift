@@ -33,6 +33,8 @@ class MainGameViewController: UIViewController {
     
     var passedObstacle: SCNNode?
     
+    var wall: SCNNode?
+    
     var isPlayerDead = false
         
     var timer = Timer()
@@ -66,13 +68,16 @@ class MainGameViewController: UIViewController {
         sceneView.scene.physicsWorld.gravity.y = gravityY
         
         //sceneView.debugOptions = [.showPhysicsShapes]
-        setUpStartGameButton()
+        
         setUpInstructionLabel()
         setUpTutorialOverlay()
         setUpScoreLabel()
-        setUpReplayButton()
-        setUpStopButton()
-        setUpGoBackButton()
+        
+        if !GameController.shared.isFirstTimePlay {
+            setUpReplayButton()
+            setUpStopButton()
+            setUpGoBackButton()
+        }
         
         player = GameNodes.getPlayer()
         sceneView.scene.rootNode.addChildNode(player)
@@ -82,11 +87,24 @@ class MainGameViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureARSession()
+        //CABasicAnimation must start in ViewWillAppear
+        if !GameController.shared.isFirstTimePlay {
+            setUpStartGameButton()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+         if GameController.shared.isFirstTimePlay {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.onStartGameButtonTouched()
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         timer.invalidate()
+        
         sceneView.session.pause()
         GameFlowController.shared.reset()
         sceneView.scene.rootNode.childNodes.forEach { (node) in
@@ -152,15 +170,19 @@ extension MainGameViewController {
             startGameButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -24)
             ]
         )
-        startGameButton.setUp(text: "Start Game", size: 30)
-        //showView(startGameButton)
+        startGameButton.setUp(text: localizedString("Start Game"), size: 30, adjustToSystem: false, shimmer: true)
     }
     
     func setUpInstructionLabel() {
         sceneView.addSubview(instructionLabel)
         instructionLabel.setConstraint()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.instructionLabel.show(text: "Adjust to a comfortable position and hit start", duration: 3)
+            if !GameController.shared.isFirstTimePlay {
+                self.instructionLabel.show(text: localizedString("Adjust to a comfortable position and hit start"), duration: 3)
+            } else {
+                self.instructionLabel.show(text: localizedString("Avoid incoming objects by moving and rotating your device in all dimensions"), duration: 5)
+            }
         }
     }
     
@@ -200,18 +222,19 @@ extension MainGameViewController {
             ]
         )
         stopButton.setUp(size: 30, padding: 8)
+        hideView(stopButton)
     }
     
     func setUpGoBackButton() {
         goBackButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onGoBackTouched)))
         sceneView.addSubview(goBackButton)
         NSLayoutConstraint.activate([
-            goBackButton.rightAnchor.constraint(equalTo: replayButton.leftAnchor, constant: -12),
+            goBackButton.leftAnchor.constraint(equalTo: sceneView.leftAnchor, constant: 12),
             goBackButton.bottomAnchor.constraint(equalTo: sceneView.safeAreaLayoutGuide.bottomAnchor, constant: -24)
             ]
         )
         goBackButton.setUp(size: 60)
-        hideView(goBackButton)
+        //hideView(goBackButton)
     }
 }
 
@@ -222,34 +245,46 @@ extension MainGameViewController:ARSCNViewDelegate {
             guard let pointOfView = sceneView.pointOfView else { return }
             
             updatePositionAndOrientationOf(player, withPosition: SCNVector3(0, 0, -playerInitialDistance), relativeTo: pointOfView)
-                //check if player is inbound
-                let x = player.position.x
-                let y = player.position.y
-                let z = player.position.z
-                let maxXOffset = GameFlowController.shared.maxPlayerXOffset
-                let maxYOffset = GameFlowController.shared.maxPlayerYOffset
-                if x < -maxXOffset {
-                    player.position.x = -maxXOffset
-                }
-                if x > maxXOffset {
-                    player.position.x = maxXOffset
-                }
-                if y < -maxYOffset {
-                    player.position.y = -maxYOffset
-                }
-                if y > maxYOffset {
-                    player.position.y = maxYOffset
-                }
-                if z < -(playerInitialDistance + playerMaxDistanceOffset) {
-                    player.position.z = -(playerInitialDistance + playerMaxDistanceOffset)
-                }
-                if z > -playerInitialDistance + playerMaxDistanceOffset {
-                    player.position.z = -playerInitialDistance + playerMaxDistanceOffset
-                }
-                
-                //disable some degree of freedom
-                player.eulerAngles.x = 0
-                player.eulerAngles.y = 0
+            //check if player is inbound
+            let x = player.position.x
+            let y = player.position.y
+            let z = player.position.z
+            let maxXOffset = GameFlowController.shared.maxPlayerXOffset
+            let maxYOffset = GameFlowController.shared.maxPlayerYOffset
+            
+            var shouldShowWall = false
+            if x < -maxXOffset {
+                player.position.x = -maxXOffset
+                shouldShowWall = true
+            }
+            if x > maxXOffset {
+                player.position.x = maxXOffset
+                shouldShowWall = true
+            }
+            if y < -maxYOffset {
+                player.position.y = -maxYOffset
+                shouldShowWall = true
+            }
+            if y > maxYOffset {
+                player.position.y = maxYOffset
+                shouldShowWall = true
+            }
+            if z < -(playerInitialDistance + playerMaxDistanceOffset) {
+                player.position.z = -(playerInitialDistance + playerMaxDistanceOffset)
+            }
+            if z > -playerInitialDistance + playerMaxDistanceOffset {
+                player.position.z = -playerInitialDistance + playerMaxDistanceOffset
+            }
+            
+            if shouldShowWall {
+                showWall()
+            } else {
+                dismissWall()
+            }
+            
+            //disable some degree of freedom
+            player.eulerAngles.x = 0
+            player.eulerAngles.y = 0
         }
     }
     
@@ -277,6 +312,25 @@ extension MainGameViewController:ARSCNViewDelegate {
                 node.removeFromParentNode()
             }
         }
+    }
+    
+    func showWall() {
+        if !GameFlowController.shared.wallExisted {
+            wall = GameNodes.getWall()
+            wall!.runAction(SCNAction.fadeIn(duration: 0.2))
+            wall!.position.z = -0.5
+            sceneView.scene.rootNode.addChildNode(wall!)
+            GameFlowController.shared.wallExisted = true
+        }
+    }
+    
+    func dismissWall() {
+        if wall == nil { return }
+        let dismissAction = SCNAction.sequence([SCNAction.fadeOut(duration: 1), SCNAction.customAction(duration: 0, action: { (node, _) in
+            node.removeEverything()
+            GameFlowController.shared.wallExisted = false
+        })])
+        wall?.runAction(dismissAction)
     }
     
     func setUpSurroundingDetection(anchor: ARPlaneAnchor) -> SCNNode{
@@ -331,7 +385,9 @@ extension MainGameViewController {
             timePassed = 0.0
             addObstacle()
         }
-        scoreLabel.label.text = String(Int(GameFlowController.shared.timeSinceStart))
+        DispatchQueue.main.async {
+            self.scoreLabel.label.text = String(Int(GameFlowController.shared.timeSinceStart))
+        }
     }
     
     private func addObstacle() {
@@ -342,24 +398,28 @@ extension MainGameViewController {
                 var directionString = ""
                 switch GameFlowController.shared.currentDirection {
                 case .down:
-                    directionString = "up"
+                    directionString = localizedString("up")
                 case .up:
-                    directionString = "down"
+                    directionString = localizedString("down")
                 case .left:
-                    directionString = "right"
+                    directionString = localizedString("right")
                 case .right:
-                    directionString = "left"
+                    directionString = localizedString("left")
+                case .wall:
+                    directionString = ""
                 case .rotate:
                     directionString = "rotate"
                 case .end:
                     directionString = ""
                 }
-                if GameFlowController.shared.currentDirection == .rotate {
-                    self.instructionLabel.show(text: "Rotate your device", duration: 2)
+                if GameFlowController.shared.currentDirection == .wall {
+                    self.instructionLabel.show(text: localizedString("You can't surpass the boundary indicated by the blue tunnel"), duration: 3)
+                } else if GameFlowController.shared.currentDirection == .rotate {
+                    self.instructionLabel.show(text: localizedString("Rotate your device"), duration: 2)
                 } else if GameFlowController.shared.currentDirection == .end {
-                    self.instructionLabel.show(text: "Enjoy your game!", duration: 3)
+                    self.instructionLabel.show(text: localizedString("Enjoy your game!"), duration: 3)
                 } else {
-                    self.instructionLabel.show(text: "Move your device \(directionString)", duration: 2)
+                    self.instructionLabel.show(text: "\(localizedString("Move your device")) \(directionString)", duration: 2)
                 }
             }
         }
@@ -379,15 +439,23 @@ extension MainGameViewController {
             node.parent?.runAction(SCNAction.sequence([SCNAction.wait(duration: 0.2), SCNAction.customAction(duration: 0, action: { (node, _) in
                 node.removeEverything()
             })]))
-//            node.parent?.childNode(withName: "obstacle", recursively: false)?.removeEverything()
-//            node.removeEverything()
-//            node.parent?.removeEverything()
             passedObstacle = node
+            
+            MusicPlayer.shared.playSoundEffect()
+            
+            if GameController.shared.isFirstTimePlay && !isPlayerDead {
+                GameFlowController.shared.directions.remove(at: 0)
+                if GameFlowController.shared.directions.isEmpty {
+                    onGoBackTouched()
+                }
+            }
         }
     }
     
     private func handlePlayerDeath() {
-        AudioServicesPlaySystemSound(1519)
+        if GameController.shared.isHapticOn {
+            AudioServicesPlaySystemSound(1519)
+        }
         player.physicsBody?.isAffectedByGravity = true
         timer.invalidate()
         isPlayerDead = true
@@ -406,32 +474,47 @@ extension MainGameViewController {
             }
         }
         
-        //give metals
-        let metalsEarned = Int(score / 10)
-        if metalsEarned > 0 {
-            GameController.shared.metals += metalsEarned
-            instructionLabel.show(text: "You got \(metalsEarned) metals", duration: 2)
-        }
-        
-        //clear obstacles
-        sceneView.scene.rootNode.childNodes.forEach { (node) in
-            if let obstacle = node.childNode(withName: "obstacle", recursively: false) {
-                obstacle.removeEverything()
-                obstacle.parent?.removeEverything()
-                obstacle.parent?.childNode(withName: "pass", recursively: false)?.removeEverything()
+        if GameController.shared.isFirstTimePlay {
+            //clear obstacles
+            sceneView.scene.rootNode.childNodes.forEach { (node) in
+                if let obstacle = node.childNode(withName: "obstacle", recursively: false) {
+                    obstacle.removeEverything()
+                    obstacle.parent?.removeEverything()
+                    obstacle.parent?.childNode(withName: "pass", recursively: false)?.removeEverything()
+                }
             }
+            //reset
+            GameFlowController.shared.reset()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.onReplayButtonTouched()
+            }
+        } else {
+            //give metals
+            let metalsEarned = Int(score / 10)
+            if metalsEarned > 0 {
+                GameController.shared.metals += metalsEarned
+                instructionLabel.show(text: "\(localizedString("You got")) \(metalsEarned) \(localizedString("metals"))", duration: 2)
+            }
+            
+            //clear obstacles
+            sceneView.scene.rootNode.childNodes.forEach { (node) in
+                if let obstacle = node.childNode(withName: "obstacle", recursively: false) {
+                    obstacle.removeEverything()
+                    obstacle.parent?.removeEverything()
+                    obstacle.parent?.childNode(withName: "pass", recursively: false)?.removeEverything()
+                }
+            }
+            //UI
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.showView(self.goBackButton)
+                self.showView(self.replayButton)
+                self.hideView(self.stopButton)
+            }
+            //reset
+            GameFlowController.shared.reset()
         }
-        //UI
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.showView(self.goBackButton)
-            self.showView(self.replayButton)
-        }
-        //reset
-        GameFlowController.shared.reset()
-//        print("DEAD")
     }
-    
-    
 }
 
 //MARK: UI
@@ -460,8 +543,6 @@ extension MainGameViewController {
     }
     
     @objc private func onStartGameButtonTouched(firstPlay: Bool = true) {
-        //reset tracking
-//        configureARSession()
         if let transfrom = sceneView.pointOfView?.simdTransform {
             sceneView.session.setWorldOrigin(relativeTransform: transfrom)
         }
@@ -470,11 +551,12 @@ extension MainGameViewController {
         setUpTimer()
         GameFlowController.shared.setUpTimer()
         hideView(startGameButton)
+        showView(stopButton)
     }
     
     @objc private func onStopButtonTouched() {
         if (GameFlowController.shared.isPaused) {
-            instructionLabel.show(text: "Game will resume in 3 seconds, adjust position now", duration: 3)
+            instructionLabel.show(text: localizedString("Game will resume in 3 seconds, adjust position now"), duration: 3)
             configureARSession()
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 UIApplication.shared.isIdleTimerDisabled = true
@@ -488,7 +570,7 @@ extension MainGameViewController {
             sceneView.session.pause()
             sceneView.scene.isPaused = true
             timer.invalidate()
-            instructionLabel.show(text: "Game paused. You can have a rest and adjust to a more comfortable position", duration: 6)
+            instructionLabel.show(text: localizedString("Game paused. You can have a rest and adjust to a more comfortable position"), duration: 6)
         }
     }
     
@@ -503,7 +585,16 @@ extension MainGameViewController {
     
     @objc private func onGoBackTouched() {
         player.removeEverything()
-        onDoneBlock?()
-        dismiss(animated: false)
+        DispatchQueue.main.async {
+            if GameController.shared.isFirstTimePlay {
+                GameController.shared.isFirstTimePlay = false
+                let vc = MenuViewController()
+                vc.modalPresentationStyle = .fullScreen
+                self.show(vc, sender: nil)
+            } else {
+                self.onDoneBlock?()
+                self.dismiss(animated: false)
+            }
+        }
     }
 }
